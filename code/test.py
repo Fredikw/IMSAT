@@ -1,85 +1,97 @@
+"""
+Libraries
 
+"""
 
 import torch
 import torchvision
 import torchvision.transforms as transforms
 from torch.autograd import Variable
-
-import argparse
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 import numpy as np
 import math
 from sklearn.metrics.cluster import normalized_mutual_info_score
-
-from scipy.optimize import linear_sum_assignment as linear_assignment_
-
 from munkres import Munkres, print_matrix
 
 
-# Settings
-parser = argparse.ArgumentParser()
-parser.add_argument('--lr', default=0.002, type=float, help='learning rate')
-parser.add_argument('--batch_size', '-b', default=250, type=int, help='size of the batch during training')
-parser.add_argument('--lam', type=float, help='trade-off parameter for mutual information and smooth regularization',default=0.1)
-parser.add_argument('--mu', type=float, help='trade-off parameter for entropy minimization and entropy maximization',default=4)
-parser.add_argument('--prop_eps', type=float, help='epsilon', default=0.25)
-parser.add_argument('--hidden_list', type=str, help='hidden size list', default='1200-1200')
-parser.add_argument('--n_epoch', type=int, help='number of epoches when maximizing', default=50)
-parser.add_argument('--dataset', type=str, help='which dataset to use', default='mnist')
-args = parser.parse_args()
+from torch.utils.data import Dataset, DataLoader
 
-batch_size = args.batch_size
-hidden_list = args.hidden_list
-lr = args.lr
-n_epoch =1 #args.n_epoch
+
+
+"""
+Settings
+"""
+
+lr = 0.002
+batch_size = 250
+lam = 0.1
+mu = 4
+prop_eps = 0.25
+hidden_list = '1200-1200'
+n_epoch = 10#50
+dataset = "mnist"
+
+
+
+
 
 # Use GPU
 use_cuda = torch.cuda.is_available()
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 print(device)
 
-# Data
-print('==> Preparing data..')
-class MyDataset(torch.utils.data.Dataset):
-    # new dataset class that allows to get the sample indices of mini-batch
-    def __init__(self,root,download, train, transform):
-        self.MNIST = torchvision.datasets.MNIST(root=root,
-                                        download=download,
-                                        train=train,
-                                        transform=transform)
-    def __getitem__(self, index):
-        data, target = self.MNIST[index]
-        return data, target, index
-    
+
+
+
+"""
+Data Preprocessing
+
+"""
+#TODO Preprocess the AILARON dataset to a suitable format.
+#TODO Implement custome dataset for AILARON data. Should inherit from torch.utils.data.Dataset
+
+import torch
+from torchvision import transforms
+
+
+class MNISTDataset(Dataset):
+    def __init__(self, train, download):
+        self.mnist_data = torchvision.datasets.MNIST(root='./data',
+                                                     train=train,
+                                                     download=True,
+                                                     transform=torchvision.transforms.ToTensor())
+
+    def __getitem__(self, idx):
+        img, label = self.mnist_data[idx]
+        return img, label, idx
+
     def __len__(self):
-        return len(self.MNIST)
+        return len(self.mnist_data)
 
-# Normalize the pixel values of an image to a mean of 0.5 and a standard deviation of 0.5
-transform_train = transforms.Compose([
-    transforms.ToTensor(),transforms.
-    Normalize((0.5,), (0.5,))
-])
+# ailaron_train = AILARONDataset()
+# dataloader = DataLoader(dataset=ailaron_train, batch_size=batch_size, shuffle=True)
 
-# Load the training set of the MNIST dataset
-trainset = MyDataset(root='./data', train=True, download=True, transform=transform_train)
+# Load MNIST dataset, normalizes data and transform to tensor.
+mnist_train = MNISTDataset(train=True, download=True)
+mnist_test  = MNISTDataset(train=False, download=False)
 
-# Load the test set of the MNIST dataset
-testset = MyDataset(root='./data', train=False, download=False, transform=transform_train)
+# Create a subset of the MNIST dataset with the first 100 examples
+mnist_train_subset = torch.utils.data.Subset(mnist_train, range(3000))
+mnist_test_subset  = torch.utils.data.Subset(mnist_test, range(32))
 
-trainset = trainset + testset
+# # Get a random image from the dataset
+# image, label = mnist_train[np.random.randint(0, len(mnist_train))]
 
-# Create a DataLoader for the training dataset, provides an efficient way to load and preprocess data in parallel.
-# TODO The training set and testset should not be the same dataset
-trainloader = torch.utils.data.DataLoader(trainset, batch_size=batch_size, shuffle=True)
-testloader  = torch.utils.data.DataLoader(trainset, batch_size=batch_size, shuffle=False)
+# # Plot the image
+# plt.imshow(image[0], cmap='gray')
+# plt.title(f'Label: {label}')
+# plt.show()
 
-
-
-
-
-
+# Create DataLoader
+train_loader = DataLoader(mnist_train_subset, batch_size=batch_size, shuffle=True)
+test_loader  = DataLoader(mnist_test, batch_size=batch_size, shuffle=True)
 
 
 
@@ -91,9 +103,9 @@ testloader  = torch.utils.data.DataLoader(trainset, batch_size=batch_size, shuff
 
 tot_cl = 10
 
-p_pred = np.zeros((len(trainset),10))
-y_pred = np.zeros(len(trainset))
-y_t = np.zeros(len(trainset))
+p_pred = np.zeros((len(mnist_train),10))
+y_pred = np.zeros(len(mnist_train))
+y_t = np.zeros(len(mnist_train))
 
 # Deep Neural Network
 class Net(nn.Module):
@@ -234,7 +246,7 @@ def vat(network, distance, x, eps_list, xi=10, Ip=1):
         d_var = d_var.to(device)
 
     
-    eps = args.prop_eps * eps_list
+    eps = prop_eps * eps_list
     eps = eps.view(-1,1)
     y_2 = network(x + eps*d_var)
 
@@ -291,7 +303,7 @@ Training
 '''
 
 print('==> Start training..')
-nearest_dist = torch.from_numpy(upload_nearest_dist(args.dataset))
+nearest_dist = torch.from_numpy(upload_nearest_dist(dataset))
 if use_cuda:
     nearest_dist = nearest_dist.to(device)
 best_acc = 0
@@ -299,7 +311,7 @@ for epoch in range(n_epoch):
     net.train()
     running_loss = 0.0
     #   start_time = time.clock()
-    for i, data in enumerate(trainloader, 0):
+    for i, data in enumerate(train_loader, 0):
         # get the inputs
         inputs, labels, ind = data
         inputs = inputs.view(-1, 28 * 28)
@@ -310,13 +322,13 @@ for epoch in range(n_epoch):
         aver_entropy, entropy_aver = Compute_entropy(net, Variable(inputs))
         
         # Representing mutual information as the difference between marginal entropy and conditional entropy
-        r_mutual_i = aver_entropy - args.mu * entropy_aver
+        r_mutual_i = aver_entropy - mu * entropy_aver
         
         # Regularization penalty, R_sat
         loss_ul = loss_unlabeled(Variable(inputs), nearest_dist[ind])
         
         # Regularized Information Maximization (RIM) objective.
-        loss = loss_ul + args.lam * r_mutual_i
+        loss = loss_ul + lam * r_mutual_i
         
         # zero the parameter gradients
         optimizer.zero_grad()
@@ -334,12 +346,12 @@ for epoch in range(n_epoch):
 
     # statistics
     net.eval()
-    p_pred = np.zeros((len(trainset),10))
-    y_pred = np.zeros(len(trainset))
-    y_t = np.zeros(len(trainset))
+    p_pred = np.zeros((len(mnist_train),10))
+    y_pred = np.zeros(len(mnist_train))
+    y_t = np.zeros(len(mnist_train))
 
     with torch.no_grad():
-        for i, data in enumerate(testloader, 0):
+        for i, data in enumerate(test_loader, 0):
             inputs, labels, ind = data
             inputs = inputs.view(-1, 28 * 28)
             if use_cuda:
@@ -366,3 +378,85 @@ for epoch in range(n_epoch):
 print("Best accuracy = {:.4f}" .format(best_acc))
 print('==> Finished Training..')
 
+
+
+
+"""
+Evaluation Metric
+
+"""
+from sklearn.metrics import confusion_matrix, accuracy_score
+from scipy.optimize import linear_sum_assignment
+
+# TODO consider including Normalized Information Score as an evaluation metric.
+
+def unsupervised_clustering_accuracy(y_true: torch.Tensor, y_pred: torch.Tensor) -> float:
+    """
+    Computes the unsupervised clustering accuracy between two clusterings.
+    Uses the Hungarian algorithm to find the best matching between true and predicted labels.
+
+    Args:
+        y_true: true cluster labels as a 1D torch.Tensor
+        y_pred: predicted cluster labels as a 1D torch.Tensor
+
+    Returns:
+        accuracy: unsupervised clustering accuracy as a float
+    """
+    # Create confusion matrix
+    cm = confusion_matrix(y_pred, y_true)
+
+    # Compute best matching between true and predicted labels using the Hungarian algorithm
+    _, col_ind = linear_sum_assignment(-cm)
+
+    # Reassign labels for the predicted clusters
+    y_pred_reassigned = torch.tensor(col_ind)[y_pred.long()]
+
+    # Compute accuracy as the percentage of correctly classified samples
+    acc = accuracy_score(y_true, y_pred_reassigned)
+
+    return acc
+
+"""
+Testing
+
+"""
+
+def test_classifier(model: Net, test_loader: DataLoader) -> None:
+    """
+    Testing a classifier given the model and a test set.
+
+    Args:
+        model: Neural network model to train.
+        test_loader: PyTorch data loader containing the test data.
+    
+    Returns:
+        None
+    """
+    
+    # Disable gradient computation, as we don't need it for inference
+    model.eval()
+    # Initialize tensors for true and predicted labels
+    y_true = torch.zeros(len(test_loader.dataset))
+    y_pred = torch.empty(len(test_loader.dataset))
+
+    with torch.no_grad():
+        # Iterate over the mini-batches in the data loader
+        for i, data in enumerate(test_loader):
+            # Get the inputs and true labels for the mini-batch and reshape
+            inputs, labels_true, _ = data
+            inputs = inputs.view(-1, 28*28)
+
+            # Forward pass through the model to get predicted labels
+            labels_pred = F.softmax(model(inputs), dim=1)
+
+            # Store predicted and true labels in tensors
+            y_pred[i*len(labels_true):(i+1)*len(labels_true)] = torch.argmax(labels_pred, dim=1)
+            y_true[i*len(labels_true):(i+1)*len(labels_true)] = labels_true
+
+    # Compute unsupervised clustering accuracy score
+    acc = unsupervised_clustering_accuracy(y_true, y_pred)
+
+    print(f"\nThe unsupervised clustering accuracy score of the classifier is: {acc}")
+
+
+test_classifier(net, train_loader)
