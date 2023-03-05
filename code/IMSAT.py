@@ -3,31 +3,31 @@ Libraries
 
 """
 
-from typing import Callable
-
 import numpy as np
 import matplotlib.pyplot as plt
+
+from scipy.optimize import linear_sum_assignment
+from sklearn.metrics import confusion_matrix, accuracy_score
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.nn.init as init
 import torch.optim as optim
+from torch.autograd import Variable
 from torch.utils.data import DataLoader
 
-from scipy.optimize import linear_sum_assignment
-
-from sklearn.metrics import confusion_matrix, accuracy_score
-from torch.autograd import Variable
 import torchvision
 
+from typing import Callable
+
 
 """
-Setting the hyperparameters
+Setting generic hyperparameters
 
 """
 
-num_epochs: int = 20
+num_epochs: int = 5
 batch_size: int = 250    # Should be set to a power of 2.
 # Learning rate
 lr:         float = 0.002
@@ -77,13 +77,15 @@ mnist_test_subset  = torch.utils.data.Subset(mnist_test, range(32))
 train_loader = DataLoader(mnist_train_subset, batch_size=batch_size, shuffle=True)
 test_loader  = DataLoader(mnist_test, batch_size=batch_size, shuffle=True)
 
+
 """
-Settings
+Setting hyperparameters for the IMSAT algorithm 
 
 """
 
 # Trade-off parameter for mutual information and smooth regularization
-lam:        float = 0.1
+lam: float = 0.1
+
 
 """
 Multi-output probabilistic classifier that maps similar inputs into similar representations.
@@ -129,9 +131,8 @@ class NeuralNet(nn.Module):
         x = self.relu2(x)
         
         x = self.fc3(x)
-        
         return x
-
+        
 """
 Approximating the marginal distribution
 
@@ -149,7 +150,7 @@ def mariginal_distribution(conditionals: torch.Tensor) -> torch.Tensor:
     """
 
     # Calculate the sums for each columns.
-    return torch.sum(conditionals, dim=0) / conditionals.size()[0]
+    return torch.sum(conditionals, dim=0) / conditionals.shape[0]
 
 """
 Mutual Information
@@ -167,7 +168,11 @@ def shannon_entropy(probabilities: torch.Tensor) -> float:
         The Shannon entropy
     """
 
-    return -torch.sum(probabilities * torch.log(probabilities))
+    if probabilities.dim() == 1:
+        return -torch.sum(probabilities * torch.log(probabilities))
+    
+    else:
+        return -torch.sum(probabilities * torch.log(probabilities)) / probabilities.shape[0]
 
 
 def mutual_information(mariginals: torch.Tensor, conditionals: torch.Tensor) -> float:
@@ -181,19 +186,48 @@ def mutual_information(mariginals: torch.Tensor, conditionals: torch.Tensor) -> 
     Returns:
         The mutual information between the two random variables.
     """
-
-    # TODO Remove
-    mu: float = 4
     
     marginal_entropy    = shannon_entropy(mariginals)
     conditional_entropy = shannon_entropy(conditionals)
 
-    return mu * marginal_entropy - conditional_entropy
+    return marginal_entropy - conditional_entropy
 
 """
 Self-Augmented Training (SAT)
 
 """
+
+def generate_virtual_adversarial_perturbation(model, x, epsilon=1.0, num_iterations=1):
+    # Set the model to evaluation mode
+    model.eval()
+    
+    # Get the initial predictions
+    with torch.no_grad():
+        y_pred = model(x)
+    
+    # Generate random unit tensor for perturbation direction
+    d = torch.randn_like(x)
+    d = F.normalize(d, p=2, dim=1)
+    d = d.requires_grad_()
+    
+    # Calculate the perturbation
+    for i in range(num_iterations):
+        # Forward pass with perturbation
+        y_perturbed = model(x + epsilon * d)
+        
+        # Calculate the KL divergence between the predictions with and without perturbation
+        kl_div = F.kl_div(F.log_softmax(y_perturbed, dim=1), F.softmax(y_pred, dim=1), reduction='batchmean')
+        
+        # Calculate the gradient of the KL divergence w.r.t the perturbation
+        grad = torch.autograd.grad(kl_div, d)[0]
+        
+        # Update the perturbation
+        d = torch.clamp(d + grad, min=-1.0, max=1.0)
+        d = F.normalize(d, p=2, dim=1)
+        d = d.requires_grad_()
+    
+    return epsilon * d
+
 
 def self_augmented_training(model: NeuralNet, X: torch.Tensor, Y: torch.Tensor, eps: float = 1.0, ksi: float = 1e1, num_iters: int = 1) -> float:
     """
@@ -214,40 +248,11 @@ def self_augmented_training(model: NeuralNet, X: torch.Tensor, Y: torch.Tensor, 
 
     """
     Virtual Adversarial Training
+
     """
 
-    r = torch.randn_like(X)
-    r = F.normalize(r, p=2, dim=1)
-    # r = r.renorm(2, dim=1, maxnorm=1.0)
-    # r.requires_grad_(True)
-
-    # # TODO remove
-    # print("r.grad", r.grad)
-    # print("r.grad_fn", r.grad_fn)
-    # print("r.is_leaf", r.is_leaf)
-    # print("r.requires_grad", r.requires_grad)
-
-
-    for i in range(num_iters):
-
-        r_var = Variable(r)
-        r_var.requires_grad_(True)
-
-        # Compute output of the perturbed datapoints.
-        Y_p = F.softmax(model(X + r_var * ksi), dim=1)
-   
-        # Compute the KL divergence between the probabilities
-        kl_div = F.kl_div(Y, Y_p, reduction='batchmean')
-
-        # Compute the gradient of current tensor w.r.t. graph leaves.
-        grad_r = torch.autograd.grad(kl_div, r_var, create_graph=True)[0]
-
-        # Set the perturbation as the gradient of the KL divergence w.r.t. r
-        r = grad_r.detach()
-        r = F.normalize(r, p=2, dim=1)
-
-
-    vad = r * eps
+    vad = generate_virtual_adversarial_perturbation(model, X)
+    model.train()
 
     """
     Self Augmented Training
@@ -273,7 +278,7 @@ def regularized_information_maximization(model: NeuralNet, X: torch.Tensor, Y: t
     """
 
     conditionals = Y
-    mariginals   = mariginal_distribution(Y)
+    mariginals   = mariginal_distribution(conditionals)
 
     I = mutual_information(mariginals, conditionals)
 
@@ -305,6 +310,8 @@ def train(model: NeuralNet, train_loader: DataLoader, criterion: Callable, optim
     # Loop over the epochs
     for epoch in range(num_epochs):
         
+        model.train()
+
         # Initialize running loss for the epoch
         running_loss = 0.0
         
@@ -312,8 +319,8 @@ def train(model: NeuralNet, train_loader: DataLoader, criterion: Callable, optim
         for _, data in enumerate(train_loader):
         
             # Get the inputs and labels for the mini-batch and reshape
-            inputs, _ = data
-            inputs    = inputs.view(-1, 28*28)
+            inputs, labels = data
+            inputs         = inputs.view(-1, 28*28)
         
             # Zero the parameter gradients
             optimizer.zero_grad()
@@ -332,8 +339,10 @@ def train(model: NeuralNet, train_loader: DataLoader, criterion: Callable, optim
             # Accumulate the loss for the mini-batch
             running_loss += loss.item()
 
+            acc = unsupervised_clustering_accuracy(labels, torch.argmax(outputs, dim=1))
+
         # Compute the average loss for the epoch and print
-        print(f"Epoch {epoch+1} loss: {running_loss/len(train_loader)}")
+        print(f"Epoch {epoch+1} loss: {running_loss/len(train_loader)}, ACC: {acc}")
 
 
 """
