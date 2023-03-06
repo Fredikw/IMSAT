@@ -211,17 +211,12 @@ def generate_virtual_adversarial_perturbation(model: NeuralNet, x, epsilon: floa
     Returns:
         Perturbation tensor
     """
-    # Set model to evaluation mode
-    # model.eval()
-    
-    # Get the initial predictions
-    with torch.no_grad():
-        y_pred = model(x)
+
+    y_pred = model(x)
     
     # Generate random unit tensor for perturbation direction
-    d = torch.randn_like(x)
+    d = torch.randn_like(x, requires_grad=True)
     d = F.normalize(d, p=2, dim=1)
-    d = d.requires_grad_()
     
     # Use finite difference method to estimate adversarial perturbation
     for i in range(num_iterations):
@@ -236,9 +231,7 @@ def generate_virtual_adversarial_perturbation(model: NeuralNet, x, epsilon: floa
         
         # Update the perturbation
         d = grad
-        # d = torch.clamp(d + grad, min=-1.0, max=1.0)
         d = F.normalize(d, p=2, dim=1)
-        d = d.requires_grad_()
     
     return epsilon * d
 
