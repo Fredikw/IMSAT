@@ -27,7 +27,7 @@ Setting generic hyperparameters
 
 """
 
-num_epochs: int = 5
+num_epochs: int = 20
 batch_size: int = 250    # Should be set to a power of 2.
 # Learning rate
 lr:         float = 0.002
@@ -197,9 +197,22 @@ Self-Augmented Training (SAT)
 
 """
 
-def generate_virtual_adversarial_perturbation(model, x, epsilon=1.0, num_iterations=1):
-    # Set the model to evaluation mode
-    model.eval()
+def generate_virtual_adversarial_perturbation(model: NeuralNet, x, epsilon: float=1.0, num_iterations: int=1) -> torch.tensor:
+    """
+    Compute virtual adversarial perturbation for a given model and input
+
+    Args:
+        model: PyTorch model to be used for virtual adversarial perturbation
+        x: Input tensor
+        epsilon: Magnitude of perturbation (default=1)
+        xi: Small constant for finite difference (default=1e-6)
+        num_iter: Number of iterations for iterative estimation of perturbation (default=1)
+
+    Returns:
+        Perturbation tensor
+    """
+    # Set model to evaluation mode
+    # model.eval()
     
     # Get the initial predictions
     with torch.no_grad():
@@ -210,7 +223,7 @@ def generate_virtual_adversarial_perturbation(model, x, epsilon=1.0, num_iterati
     d = F.normalize(d, p=2, dim=1)
     d = d.requires_grad_()
     
-    # Calculate the perturbation
+    # Use finite difference method to estimate adversarial perturbation
     for i in range(num_iterations):
         # Forward pass with perturbation
         y_perturbed = model(x + epsilon * d)
@@ -222,7 +235,8 @@ def generate_virtual_adversarial_perturbation(model, x, epsilon=1.0, num_iterati
         grad = torch.autograd.grad(kl_div, d)[0]
         
         # Update the perturbation
-        d = torch.clamp(d + grad, min=-1.0, max=1.0)
+        d = grad
+        # d = torch.clamp(d + grad, min=-1.0, max=1.0)
         d = F.normalize(d, p=2, dim=1)
         d = d.requires_grad_()
     
