@@ -232,6 +232,7 @@ def generate_virtual_adversarial_perturbation(model: NeuralNet, x, epsilon: floa
         # Update the perturbation
         d = grad
         d = F.normalize(d, p=2, dim=1)
+        d.requires_grad_()
     
     return epsilon * d
 
@@ -259,7 +260,6 @@ def self_augmented_training(model: NeuralNet, X: torch.Tensor, Y: torch.Tensor, 
     """
 
     vad = generate_virtual_adversarial_perturbation(model, X)
-    model.train()
 
     """
     Self Augmented Training
