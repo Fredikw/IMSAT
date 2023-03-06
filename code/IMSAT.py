@@ -3,24 +3,23 @@ Libraries
 
 """
 
-import numpy as np
+from typing import Callable
+
 import matplotlib.pyplot as plt
 
-from scipy.optimize import linear_sum_assignment
-from sklearn.metrics import confusion_matrix, accuracy_score
+import numpy as np
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.nn.init as init
 import torch.optim as optim
-from torch.autograd import Variable
-from torch.utils.data import DataLoader
-
 import torchvision
 
-from typing import Callable
-
+from scipy.optimize import linear_sum_assignment
+from sklearn.metrics import accuracy_score, confusion_matrix
+from torch.autograd import Variable
+from torch.utils.data import DataLoader
 
 """
 Setting generic hyperparameters
@@ -28,15 +27,15 @@ Setting generic hyperparameters
 """
 
 num_epochs: int = 20
-batch_size: int = 250    # Should be set to a power of 2.
+batch_size: int = 250   # Should be set to a power of 2.
 # Learning rate
 lr:         float = 0.002
-
 
 """
 Data Preprocessing
 
 """
+
 #TODO Preprocess the AILARON dataset to a suitable format.
 
 # #TODO Implement custome dataset for AILARON data. Should inherit from torch.utils.data.Dataset
@@ -61,9 +60,9 @@ mnist_train = torchvision.datasets.MNIST(root='./data', train=True, download=Tru
 mnist_test  = torchvision.datasets.MNIST(root='./data', train=False, download=False, transform=torchvision.transforms.ToTensor())
 
 
-# Create a subset of the MNIST dataset with the first 100 examples
-mnist_train_subset = torch.utils.data.Subset(mnist_train, range(3000))
-mnist_test_subset  = torch.utils.data.Subset(mnist_test, range(32))
+# # Create a subset of the MNIST dataset with the first 100 examples
+# mnist_train_subset = torch.utils.data.Subset(mnist_train, range(3000))
+# mnist_test_subset  = torch.utils.data.Subset(mnist_test, range(32))
 
 # # Get a random image from the dataset
 # image, label = mnist_train[np.random.randint(0, len(mnist_train))]
@@ -74,9 +73,8 @@ mnist_test_subset  = torch.utils.data.Subset(mnist_test, range(32))
 # plt.show()
 
 # Create DataLoader
-train_loader = DataLoader(mnist_train_subset, batch_size=batch_size, shuffle=True)
+train_loader = DataLoader(mnist_train, batch_size=batch_size, shuffle=True)
 test_loader  = DataLoader(mnist_test, batch_size=batch_size, shuffle=True)
-
 
 """
 Setting hyperparameters for the IMSAT algorithm 
@@ -85,7 +83,6 @@ Setting hyperparameters for the IMSAT algorithm
 
 # Trade-off parameter for mutual information and smooth regularization
 lam: float = 0.1
-
 
 """
 Multi-output probabilistic classifier that maps similar inputs into similar representations.
@@ -165,7 +162,7 @@ def shannon_entropy(probabilities: torch.Tensor) -> float:
         probabilities:
     
     Returns:
-        The Shannon entropy
+        The Shannon entropy (float)
     """
 
     if probabilities.dim() == 1:
@@ -197,31 +194,39 @@ Self-Augmented Training (SAT)
 
 """
 
-def generate_virtual_adversarial_perturbation(model: NeuralNet, x, epsilon: float=1.0, num_iterations: int=1) -> torch.tensor:
+def self_augmented_training(model: NeuralNet, X: torch.Tensor, Y: torch.Tensor, eps: float = 1.0, ksi: float = 1e0, num_iters: int = 1) -> float:
     """
-    Compute virtual adversarial perturbation for a given model and input
-
+    Self Augmented Training by Virtual Adversarial Perturbation.
+    
     Args:
-        model: PyTorch model to be used for virtual adversarial perturbation
-        x: Input tensor
-        epsilon: Magnitude of perturbation (default=1)
-        xi: Small constant for finite difference (default=1e-6)
-        num_iter: Number of iterations for iterative estimation of perturbation (default=1)
+        model: multi-output probabilistic classifier. 
+        X: Input samples.
+        Y: output when applying model on X.
+        eps: Magnitude of perturbation.
+        ksi: A small constant used for computing the finite difference approximation of the KL divergence.
+        num_iters: The number of iterations to use for computing the perturbation.
 
     Returns:
-        Perturbation tensor
+        The total loss (sum of cross-entropy loss on original input and perturbed input) for the batch.
+
     """
 
-    y_pred = model(x)
+    """
+    Generate Virtual Adversarial Perturbation
+
+    """
+
+    #TODO Consider removing without breaking code
+    y_pred = model(X)
     
     # Generate random unit tensor for perturbation direction
-    d = torch.randn_like(x, requires_grad=True)
+    d = torch.randn_like(X, requires_grad=True)
     d = F.normalize(d, p=2, dim=1)
     
     # Use finite difference method to estimate adversarial perturbation
-    for i in range(num_iterations):
+    for _ in range(num_iters):
         # Forward pass with perturbation
-        y_perturbed = model(x + epsilon * d)
+        y_perturbed = model(X + ksi * d)
         
         # Calculate the KL divergence between the predictions with and without perturbation
         kl_div = F.kl_div(F.log_softmax(y_perturbed, dim=1), F.softmax(y_pred, dim=1), reduction='batchmean')
@@ -233,39 +238,12 @@ def generate_virtual_adversarial_perturbation(model: NeuralNet, x, epsilon: floa
         d = grad
         d = F.normalize(d, p=2, dim=1)
         d.requires_grad_()
-    
-    return epsilon * d
-
-
-def self_augmented_training(model: NeuralNet, X: torch.Tensor, Y: torch.Tensor, eps: float = 1.0, ksi: float = 1e1, num_iters: int = 1) -> float:
-    """
-    Self Augmented Training by Virtual Adversarial Training.
-    
-    Args:
-        model: multi-output probabilistic classifier. 
-        X: Input samples.
-        Y: output when applying model on x.
-        eps: Perturbation size.
-        ksi: A small constant used for computing the finite difference approximation of the KL divergence.
-        num_iters: The number of iterations to use for computing the perturbation.
-
-    Returns:
-        The total loss (sum of cross-entropy loss on original input and perturbed input) for the batch.
 
     """
+    Apply Perturbation and calculate the Kullback-Leibler divergence Loss
 
     """
-    Virtual Adversarial Training
-
-    """
-
-    vad = generate_virtual_adversarial_perturbation(model, X)
-
-    """
-    Self Augmented Training
-    """
-
-    Y_p = F.softmax(model(X + vad), dim=1)
+    Y_p = F.softmax(model(X + eps * d), dim=1)
 
     loss = F.kl_div(Y.log(), Y_p, reduction='batchmean')
     
@@ -293,7 +271,6 @@ def regularized_information_maximization(model: NeuralNet, X: torch.Tensor, Y: t
 
     return R_sat - lam * I
 
-
 """
 Training the model
 
@@ -316,12 +293,11 @@ def train(model: NeuralNet, train_loader: DataLoader, criterion: Callable, optim
     """
     # Loop over the epochs
     for epoch in range(num_epochs):
-        
-        model.train()
 
         # Initialize running loss for the epoch
         running_loss = 0.0
-        
+        running_acc  = 0.0
+
         # Loop over the mini-batches in the data loader
         for _, data in enumerate(train_loader):
         
@@ -345,18 +321,16 @@ def train(model: NeuralNet, train_loader: DataLoader, criterion: Callable, optim
 
             # Accumulate the loss for the mini-batch
             running_loss += loss.item()
-
-            acc = unsupervised_clustering_accuracy(labels, torch.argmax(outputs, dim=1))
+            # Accumulate the accuracy for the mini-batch
+            running_acc  += unsupervised_clustering_accuracy(labels, torch.argmax(outputs, dim=1))
 
         # Compute the average loss for the epoch and print
-        print(f"Epoch {epoch+1} loss: {running_loss/len(train_loader)}, ACC: {acc}")
-
+        print(f"Epoch {epoch+1} loss: {running_loss/len(train_loader):.4f}, ACC: {running_acc/len(train_loader):.4f}")
 
 """
 Evaluation Metric
 
 """
-# TODO consider including Normalized Information Score as an evaluation metric.
 
 def unsupervised_clustering_accuracy(y_true: torch.Tensor, y_pred: torch.Tensor) -> float:
     """
