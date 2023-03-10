@@ -18,7 +18,6 @@ import torchvision
 
 from scipy.optimize import linear_sum_assignment
 from sklearn.metrics import accuracy_score, confusion_matrix
-from torch.autograd import Variable
 from torch.utils.data import DataLoader
 
 """
@@ -277,7 +276,7 @@ Training the model
 """
 
 # Define the training function
-def train(model: NeuralNet, train_loader: DataLoader, criterion: Callable, optimizer: torch.optim, num_epochs: int):
+def train(model: NeuralNet, train_loader: DataLoader, criterion: Callable, optimizer: torch.optim, num_epochs: int) -> None:
     """
     Trains a given model using the provided training data, optimizer and loss criterion for a given number of epochs.
 
