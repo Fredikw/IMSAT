@@ -211,7 +211,7 @@ Invariant Information Clustering for Unsupervised Image Classification
 
 """
 
-def invariant_information_clustering(z: torch.Tensor, zt: torch.Tensor, C: int = 10, eps: float=float_info.epsilon) -> float:
+def invariant_information_clustering_loss(y: torch.Tensor, yt: torch.Tensor, C: int = 10, eps: float=float_info.epsilon) -> float:
     """
     Calculate the invariant information clustering (IIC) loss.
 
@@ -226,7 +226,7 @@ def invariant_information_clustering(z: torch.Tensor, zt: torch.Tensor, C: int =
     """
 
     # Compute the joint probability matrix
-    P = (z.unsqueeze(2) * zt.unsqueeze(1)).sum(dim=0)
+    P = (y.unsqueeze(2) * yt.unsqueeze(1)).sum(dim=0)
     # Symmetrize and normalize matrix
     P = ((P + P.t()) / 2) / P.sum()
     # Prevent numerical issues from p values close to zero. 
@@ -238,16 +238,28 @@ def invariant_information_clustering(z: torch.Tensor, zt: torch.Tensor, C: int =
 
     return - (P * (torch.log(P) - torch.log(Pi) - torch.log(Pj))).sum()
 
-"""
+def invariant_information_clustering(model, x: torch.Tensor, y: torch.Tensor) -> float:
+
+    # Generate random unit tensor for perturbation direction
+    d = torch.randn_like(x, requires_grad=True)
+    d = F.normalize(d, p=2, dim=1)
+
+    yt = model(x + d)
+
+    loss = invariant_information_clustering_loss(y, yt)
+
+    return loss
 
 """
 
-# # Initialize the model, loss function, and optimizer
-# model     = NeuralNet()
-# criterion = regularized_information_maximization
-# optimizer = optim.Adam(model.parameters(), lr=lr)
+"""
 
-# # Train the model
-# train(model, train_loader, criterion, optimizer, num_epochs)
-# # Test model
-# test_classifier(model, test_loader)
+# Initialize the model, loss function, and optimizer
+model     = NeuralNet()
+criterion = invariant_information_clustering
+optimizer = optim.Adam(model.parameters(), lr=lr)
+
+# Train the model
+train(model, train_loader, criterion, optimizer, num_epochs)
+# Test model
+test_classifier(model, test_loader)
