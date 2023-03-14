@@ -4,7 +4,7 @@ Libraries
 """
 
 from typing import Callable
-
+from sys import float_info
 import matplotlib.pyplot as plt
 
 import numpy as np
@@ -19,6 +19,8 @@ import torchvision
 from scipy.optimize import linear_sum_assignment
 from sklearn.metrics import accuracy_score, confusion_matrix
 from torch.utils.data import DataLoader
+
+from archt import NeuralNet
 
 """
 Setting generic hyperparameters
@@ -75,52 +77,6 @@ mnist_test  = torchvision.datasets.MNIST(root='./data', train=False, download=Fa
 train_loader = DataLoader(mnist_train, batch_size=batch_size, shuffle=True)
 test_loader  = DataLoader(mnist_test, batch_size=batch_size, shuffle=True)
 
-"""
-Multi-output probabilistic classifier that maps similar inputs into similar representations.
-
-"""
-
-class NeuralNet(nn.Module):
-    def __init__(self):
-        super(NeuralNet, self).__init__()
-        
-        # Add first fully connected layer with 28 * 28 = 784 input neurons and 1200 output neurons
-        self.fc1 = nn.Linear(28 * 28, 1200)
-        # Initialize the weights of the first fully connected layer using the He normal initialization
-        init.kaiming_normal_(self.fc1.weight, nonlinearity='relu')
-        # Add first batch normalization layer with 1200 neurons and epsilon = 2e-5
-        self.bn1   = nn.BatchNorm1d(1200, eps=2e-5)
-        self.bn1_F = nn.BatchNorm1d(1200, eps=2e-5, affine=False)
-        # Add first ReLU activation function
-        self.relu1 = nn.ReLU()
-        
-        self.fc2 = nn.Linear(1200, 1200)
-        init.kaiming_normal_(self.fc2.weight, nonlinearity='relu')
-        self.bn2   = nn.BatchNorm1d(1200, eps=2e-5)
-        self.bn2_F = nn.BatchNorm1d(1200, eps=2e-5, affine=False)
-
-        self.relu2 = nn.ReLU()
-        
-        # Add output layer of size 10 
-        self.fc3 = nn.Linear(1200, 10)
-        init.kaiming_normal_(self.fc3.weight, nonlinearity='linear')
-        
-    # Define the forward pass through the network
-    def forward(self, x):
-        # Pass the input through the first fully connected layer
-        x = self.fc1(x)
-        # Pass the output of the first fully connected layer through the first batch normalization layer
-        x = self.bn1(x)
-        # Pass the output of the first batch normalization layer through the first ReLU activation function
-        x = self.relu1(x)
-        
-        x = self.fc2(x)
-        x = self.bn2(x)
-        x = self.relu2(x)
-        
-        x = self.fc3(x)
-        return x
- 
 """
 Training the model
 
@@ -255,7 +211,7 @@ Invariant Information Clustering for Unsupervised Image Classification
 
 """
 
-def invariant_information_clustering(z: torch.Tensor, zt: torch.Tensor, C: int = 10, eps: float=1e-8) -> float:
+def invariant_information_clustering(z: torch.Tensor, zt: torch.Tensor, C: int = 10, eps: float=float_info.epsilon) -> float:
     """
     Calculate the invariant information clustering (IIC) loss.
 
@@ -271,7 +227,7 @@ def invariant_information_clustering(z: torch.Tensor, zt: torch.Tensor, C: int =
 
     # Compute the joint probability matrix
     P = (z.unsqueeze(2) * zt.unsqueeze(1)).sum(dim=0)
-    # Symmetrize matrix
+    # Symmetrize and normalize matrix
     P = ((P + P.t()) / 2) / P.sum()
     # Prevent numerical issues from p values close to zero. 
     P[(P < eps).data] = eps
