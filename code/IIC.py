@@ -236,7 +236,7 @@ def invariant_information_clustering(z: torch.Tensor, zt: torch.Tensor, C: int =
     Pi = P.sum(dim=1).view(C, 1).expand(C, C)
     Pj = P.sum(dim=0).view(1, C).expand(C, C)
 
-    return (P * (torch.log(Pi) + torch.log(Pj) - torch.log(P))).sum()
+    return - (P * (torch.log(P) - torch.log(Pi) - torch.log(Pj))).sum()
 
 """
 
