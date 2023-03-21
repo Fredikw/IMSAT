@@ -27,7 +27,7 @@ def perturbation(x: torch.Tensor) -> torch.Tensor:
 
     return x + d
 
-def invariant_information_clustering(model, x: torch.Tensor, y: torch.Tensor, C: int = 10, EPS: float=float_info.epsilon) -> float:
+def invariant_information_clustering(model, x: torch.Tensor, xt: torch.Tensor, y: torch.Tensor, C: int = 10, EPS: float=float_info.epsilon) -> float:
     """
     Calculate the invariant information clustering (IIC) loss.
 
@@ -42,7 +42,7 @@ def invariant_information_clustering(model, x: torch.Tensor, y: torch.Tensor, C:
     """
     
     # Compute representation of perturbed input.
-    yt = model(perturbation(x))
+    yt = model(xt)
 
     # Compute the joint probability matrix, symmetrize and normalize matrix
     # P = (y.unsqueeze(2) * yt.unsqueeze(1)).sum(dim=0)
