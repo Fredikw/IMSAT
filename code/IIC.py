@@ -8,7 +8,7 @@ from sys import float_info
 import torch
 import torch.nn.functional as F
 
-def invariant_information_clustering(model, inputs: torch.Tensor, y: torch.Tensor, C: int = 10, EPS: float=float_info.epsilon) -> float:
+def invariant_information_clustering(model, inputs, outputs, C: int = 10, EPS: float=float_info.epsilon) -> float:
     """
     Calculate the invariant information clustering (IIC) loss.
 
@@ -23,10 +23,10 @@ def invariant_information_clustering(model, inputs: torch.Tensor, y: torch.Tenso
     """
 
     # Get the inputs and the augmented inputs 
-    _, xt = inputs
+    y, yt = outputs
     
-    # Compute representation of perturbed input.
-    yt = model(xt)
+    # # Compute representation of perturbed input.
+    # yt = model(xt)
 
     # Compute the joint probability matrix, symmetrize and normalize matrix
     P = (y.unsqueeze(2) * yt.unsqueeze(1)).sum(dim=0)
