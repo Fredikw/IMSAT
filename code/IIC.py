@@ -8,7 +8,7 @@ from sys import float_info
 import torch
 import torch.nn.functional as F
 
-def invariant_information_clustering(model, inputs, outputs, C: int = 10, EPS: float=float_info.epsilon) -> float:
+def invariant_information_clustering(C: int = 10, EPS: float=float_info.epsilon, **kwargs) -> float:
     """
     Calculate the invariant information clustering (IIC) loss.
 
@@ -21,6 +21,8 @@ def invariant_information_clustering(model, inputs, outputs, C: int = 10, EPS: f
     Returns:
         float: Invariant Information Clustering (IIC) loss.
     """
+
+    outputs = kwargs["outputs"]
 
     # Get the inputs and the augmented inputs 
     y, yt = outputs
