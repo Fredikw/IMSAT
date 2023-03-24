@@ -123,7 +123,7 @@ def self_augmented_training(model, X: torch.Tensor, Y: torch.Tensor, eps: float 
     
     return loss
 
-def regularized_information_maximization(**kwargs) -> float():
+def regularized_information_maximization(model, inputs, outputs) -> float():
     """
     Computes the loss using regularized information maximization.
 
@@ -135,10 +135,6 @@ def regularized_information_maximization(**kwargs) -> float():
     Returns:
         The loss given by mutual information and the regularization penalty.
     """
-
-    model   = kwargs["model"]
-    inputs  = kwargs["inputs"]
-    outputs = kwargs["outputs"]
 
     conditionals = outputs
     mariginals   = mariginal_distribution(conditionals)
