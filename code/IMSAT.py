@@ -1,8 +1,3 @@
-"""
-Libraries
-
-"""
-
 import torch
 import torch.nn.functional as F
 
@@ -68,14 +63,14 @@ def mutual_information(mariginals: torch.Tensor, conditionals: torch.Tensor) -> 
 
     return marginal_entropy - conditional_entropy
 
-def self_augmented_training(model, X: torch.Tensor, Y: torch.Tensor, eps: float = 1.0, ksi: float = 1e0, num_iters: int = 1) -> float:
+def self_augmented_training(model, inputs: torch.Tensor, outputs: torch.Tensor, eps: float = 1.0, ksi: float = 1e0, num_iters: int = 1) -> float:
     """
     Self Augmented Training by Virtual Adversarial Perturbation.
     
     Args:
         model: multi-output probabilistic classifier. 
-        X: Input samples.
-        Y: output when applying model on X.
+        inputs: Input samples.
+        outputs: output when applying model on X.
         eps: Magnitude of perturbation.
         ksi: A small constant used for computing the finite difference approximation of the KL divergence.
         num_iters: The number of iterations to use for computing the perturbation.
@@ -91,19 +86,19 @@ def self_augmented_training(model, X: torch.Tensor, Y: torch.Tensor, eps: float 
     """
 
     #TODO Consider removing without breaking code
-    y_pred = model(X)
+    outputs_pred = model(inputs)
     
     # Generate random unit tensor for perturbation direction
-    d = torch.randn_like(X, requires_grad=True)
+    d = torch.randn_like(inputs, requires_grad=True)
     d = F.normalize(d, p=2, dim=1)
     
     # Use finite difference method to estimate adversarial perturbation
     for _ in range(num_iters):
         # Forward pass with perturbation
-        y_perturbed = model(X + ksi * d)
+        outputs_perturbed = model(inputs + ksi * d)
         
         # Calculate the KL divergence between the predictions with and without perturbation
-        kl_div = F.kl_div(F.log_softmax(y_perturbed, dim=1), F.softmax(y_pred, dim=1), reduction='batchmean')
+        kl_div = F.kl_div(F.log_softmax(outputs_perturbed, dim=1), F.softmax(outputs_pred, dim=1), reduction='batchmean')
         
         # Calculate the gradient of the KL divergence w.r.t the perturbation
         grad = torch.autograd.grad(kl_div, d)[0]
@@ -117,13 +112,13 @@ def self_augmented_training(model, X: torch.Tensor, Y: torch.Tensor, eps: float 
     Apply Perturbation and calculate the Kullback-Leibler divergence Loss
 
     """
-    Y_p = F.softmax(model(X + eps * d), dim=1)
+    outputs_p = F.softmax(model(inputs + eps * d), dim=1)
 
-    loss = F.kl_div(Y.log(), Y_p, reduction='batchmean')
+    loss = F.kl_div(outputs.log(), outputs_p, reduction='batchmean')
     
     return loss
 
-def regularized_information_maximization(model, inputs, outputs) -> float():
+def regularized_information_maximization(model, inputs: torch.Tensor, outputs: torch.Tensor) -> float():
     """
     Computes the loss using regularized information maximization.
 
