@@ -114,9 +114,9 @@ def self_augmented_training(model, inputs: torch.Tensor, outputs: torch.Tensor, 
     Apply Perturbation and calculate the Kullback-Leibler divergence Loss
 
     """
-    outputs_p = F.softmax(model(inputs + eps * d), dim=1)
+    outputs_p = F.log_softmax(model(inputs + eps * d), dim=1)
 
-    loss = F.kl_div(outputs.log(), outputs_p, reduction='batchmean')
+    loss = F.kl_div(outputs_p, outputs, reduction='batchmean')
     
     return loss
 
