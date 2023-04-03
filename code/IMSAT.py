@@ -40,11 +40,12 @@ def shannon_entropy(probabilities: torch.Tensor) -> float:
     """
 
     if probabilities.dim() == 1:
+        # Calculates the entropy of mariginals according to the definition of Shannon Entropy.
         return -torch.sum(probabilities * torch.log(probabilities))
     
     else:
+        # Calculates the entropy of conditionals, according to (9)
         return -torch.sum(probabilities * torch.log(probabilities)) / probabilities.shape[0]
-
 
 def mutual_information(mariginals: torch.Tensor, conditionals: torch.Tensor) -> float:
     """
@@ -97,6 +98,7 @@ def self_augmented_training(model, inputs: torch.Tensor, outputs: torch.Tensor, 
         # Forward pass with perturbation
         outputs_perturbed = model(inputs + ksi * d)
         
+        # TODO Consider log in stead of log_softmax
         # Calculate the KL divergence between the predictions with and without perturbation
         kl_div = F.kl_div(F.log_softmax(outputs_perturbed, dim=1), F.softmax(outputs_pred, dim=1), reduction='batchmean')
         
