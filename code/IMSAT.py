@@ -87,7 +87,7 @@ def self_augmented_training(model, inputs: torch.Tensor, outputs: torch.Tensor, 
     """
 
     #TODO Consider removing without breaking code
-    outputs_pred = model(inputs)
+    y = model(inputs)
     
     # Generate random unit tensor for perturbation direction
     d = torch.randn_like(inputs, requires_grad=True)
@@ -96,11 +96,11 @@ def self_augmented_training(model, inputs: torch.Tensor, outputs: torch.Tensor, 
     # Use finite difference method to estimate adversarial perturbation
     for _ in range(num_iters):
         # Forward pass with perturbation
-        outputs_perturbed = model(inputs + ksi * d)
+        y_p = model(inputs + ksi * d)
         
         # TODO Consider log in stead of log_softmax
         # Calculate the KL divergence between the predictions with and without perturbation
-        kl_div = F.kl_div(F.log_softmax(outputs_perturbed, dim=1), F.softmax(outputs_pred, dim=1), reduction='batchmean')
+        kl_div = F.kl_div(F.log_softmax(y_p, dim=1), F.softmax(y, dim=1), reduction='batchmean')
         
         # Calculate the gradient of the KL divergence w.r.t the perturbation
         grad = torch.autograd.grad(kl_div, d)[0]
