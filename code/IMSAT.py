@@ -98,8 +98,8 @@ def self_augmented_training(model, inputs: torch.Tensor, outputs: torch.Tensor, 
         # Forward pass with perturbation
         y_p = model(inputs + ksi * d)
         
-        # TODO Consider log in stead of log_softmax
         # Calculate the KL divergence between the predictions with and without perturbation
+        # To avoid underflow, loss expects the argument input in the log-space.
         kl_div = F.kl_div(F.log_softmax(y_p, dim=1), F.softmax(y, dim=1), reduction='batchmean')
         
         # Calculate the gradient of the KL divergence w.r.t the perturbation
