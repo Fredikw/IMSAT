@@ -1,10 +1,10 @@
 import os
 
-import sklearn
-
 import torch
 from torch.utils import data
 from torchvision import transforms
+
+from sklearn.model_selection import train_test_split
 
 train_paths  = []
 train_labels = []
@@ -76,10 +76,10 @@ def split_dataset(data_dir: str):
 
     # Split dataset into training and test set
 
-    train_paths, train_labels, test_paths, test_labels = \
-        sklearn.sklearn.model_selection.train_test_split(ndsb_img_paths, ndsb_labels)
+    train_paths, test_paths, train_labels, test_labels = \
+        train_test_split(ndsb_img_paths, ndsb_labels)
     
-    return train_paths, train_labels, test_paths, test_labels
+    return train_paths, test_paths, train_labels, test_labels
 
 
 # """
@@ -130,6 +130,6 @@ def split_dataset(data_dir: str):
 #             return  squeeze(self.mnist[index][0].view(-1,28*28)), self.mnist[index][1]
 
 if __name__ == '__main__':
-    
-    train_paths, train_labels, test_paths, test_labels = split_dataset("./data/NDSB/train")
-#             return  squeeze(self.mnist[index][0].view(-1,28*28)), self.mnist[index][1]
+    pass
+else:
+    train_paths, test_paths, train_labels, test_labels = split_dataset("./data/NDSB/train")
