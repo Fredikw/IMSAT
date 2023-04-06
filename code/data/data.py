@@ -1,8 +1,9 @@
 import os
 
-import torch
 from torch.utils import data
 from torchvision import transforms
+
+from PIL import Image
 
 from sklearn.model_selection import train_test_split
 
@@ -38,7 +39,7 @@ class NDSBDataset(data.Dataset):
         ])
 
     def __getitem__(self, index):
-        img   = torch.load(self.paths[index])
+        img   = transforms.ToTensor()(Image.open(self.paths[index]))
         label = self.labels[index]
 
         if self.augment_data:
