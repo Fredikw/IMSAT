@@ -123,7 +123,6 @@ def split_dataset(data_dir: str):
 
 #     def __getitem__(self, index):
 #         if self.augment:
-#             # TODO needs to be squeezed
 #             # Return the augmented image, original image and label at the given index
 #             return (squeeze(self.mnist[index][0].view(-1, 28*28)), squeeze(self.mnist_augmented[index][0].view(-1, 28*28))), self.mnist[index][1]
 #         else:
