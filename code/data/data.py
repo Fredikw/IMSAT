@@ -1,5 +1,6 @@
 import os
 
+from torch import squeeze
 from torch.utils import data
 from torchvision import transforms
 
@@ -105,63 +106,55 @@ def find_max_dimension() -> tuple:
 
     return max_width, max_height
 
-"""
-MNIST dataset for testing
+# """
+# MNIST dataset for testing
 
-"""
-from torch import squeeze
+# """
 
-from torchvision.datasets import MNIST
+# from torchvision.datasets import MNIST
 
-class MNISTDataset(data.Dataset):
-    def __init__(self, train=True, augment=False):
-        # super().__init__()
+# class MNISTDataset(data.Dataset):
+#     def __init__(self, train=True, augment_data=False):
+#         # super().__init__()
 
-        self.train   = train
-        self.augment = augment
+#         self.train        = train
+#         self.augment_data = augment_data
 
-        # Load the MNIST dataset
-        self.mnist = MNIST(
-            root='./data',
-            train=self.train,
-            download=True,
-            transform=transforms.ToTensor())
+#         # Load the MNIST dataset
+#         self.mnist = MNIST(
+#             root='./data',
+#             train=self.train,
+#             download=True,
+#             transform=transforms.ToTensor())
 
-        # Apply data augmentation if requested
-        if self.augment:
-            # Define the data augmentation transforms to apply
-            augmentations = transforms.Compose([
-                transforms.RandomRotation(degrees=15),
-                transforms.RandomHorizontalFlip(p=0.5),
-                transforms.RandomVerticalFlip(p=0.5),
-                transforms.RandomCrop((28, 28), padding=0),
-                transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1)
-            ])
+#         # Apply data augmentation if requested
+#         if self.augment_data:
+#             # Define the data augmentation transforms to apply
+#             transform_list = transforms.Compose([
+#                 transforms.RandomRotation(degrees=15),
+#                 transforms.RandomHorizontalFlip(p=0.5),
+#                 transforms.RandomVerticalFlip(p=0.5),
+#                 transforms.RandomCrop((28, 28), padding=0),
+#                 transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1)
+#             ])
 
-            # Create a new dataset by applying the transforms to the original dataset
-            self.mnist_augmented = [(augmentations(img), label) for img, label in self.mnist]
+#             # Create a new dataset by applying the transforms to the original dataset
+#             self.mnist_augmented = [(transform_list(img), label) for img, label in self.mnist]
 
-    def __len__(self):
-        return len(self.mnist)
+#     def __len__(self):
+#         return len(self.mnist)
 
-    def __getitem__(self, index):
-        if self.augment:
-            # Return the augmented image, original image and label at the given index
-            return (squeeze(self.mnist[index][0].view(-1, 28*28)), squeeze(self.mnist_augmented[index][0].view(-1, 28*28))), self.mnist[index][1]
-        else:
-            # Return the original image and label at the given index
-            return  squeeze(self.mnist[index][0].view(-1,28*28)), self.mnist[index][1]
+#     def __getitem__(self, index):
+#         if self.augment_data:
+#             # Return the augmented image, original image and label at the given index
+#             return (squeeze(self.mnist[index][0].view(-1, 28*28)), squeeze(self.mnist_augmented[index][0].view(-1, 28*28))), self.mnist[index][1]
+#         else:
+#             # Return the original image and label at the given index
+#             return  squeeze(self.mnist[index][0].view(-1,28*28)), self.mnist[index][1]
 
 
 if __name__ == '__main__':
-    TRAIN_PATHS, TEST_PATHS, TRAIN_LABELS, TEST_LABELS = init_dataset("./data/NDSB/train")
-    MAX_DIMENSION = (424, 428) #find_max_dimension()
-    img = Image.open(TRAIN_PATHS[0])
-    img = transforms.ToTensor()(img)[0]
-    print(img)
-    # Resize image to the largest image in the dataset
-    # img = ImageOps.pad(image=img, size=MAX_DIMENSION, color=255)
-
+    pass
 else:
     TRAIN_PATHS, TEST_PATHS, TRAIN_LABELS, TEST_LABELS = init_dataset("./data/NDSB/train")
-    MAX_DIMENSION = (428, 428) #find_max_dimension()
+    MAX_DIMENSION = (428, 428) # find_max_dimension()
