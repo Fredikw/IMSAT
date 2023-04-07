@@ -3,14 +3,16 @@ import os
 from torch.utils import data
 from torchvision import transforms
 
-from PIL import Image
+from PIL import ImageOps, Image
 
 from sklearn.model_selection import train_test_split
 
-train_paths  = []
-train_labels = []
-test_paths   = []
-test_labels  = []
+TRAIN_PATHS:  list = []
+TRAIN_LABELS: list = []
+TEST_PATHS:   list = []
+TEST_LABELS:  list = []
+
+MAX_DIMENSION: tuple = () # max_width, max_height = (424, 428)
 
 """
 Data Preprocessing
@@ -24,11 +26,11 @@ class NDSBDataset(data.Dataset):
         self.augment_data = augment_data and train
 
         if self.train:
-            self.labels = train_labels
-            self.paths  = train_paths
+            self.labels = TRAIN_LABELS
+            self.paths  = TRAIN_PATHS
         else:
-            self.labels = test_labels
-            self.paths  = test_paths
+            self.labels = TEST_LABELS
+            self.paths  = TEST_PATHS
 
         self.transform_list = transforms.Compose([
             transforms.RandomRotation(degrees=15),
@@ -39,7 +41,12 @@ class NDSBDataset(data.Dataset):
         ])
 
     def __getitem__(self, index):
-        img   = transforms.ToTensor()(Image.open(self.paths[index]))
+        # Load image
+        img = Image.open(self.paths[index])
+        # Resize image to the largest image in the dataset
+        img = ImageOps.pad(image=img, size=MAX_DIMENSION, color=255)
+        img = transforms.ToTensor()(img)
+
         label = self.labels[index]
 
         if self.augment_data:
@@ -57,7 +64,7 @@ Utility Functions
 """
 
 # Split dataset into random train and test subsets.
-def split_dataset(data_dir: str):
+def init_dataset(data_dir: str) -> tuple:
     """
     Split dataset into random train and test subset.
 
@@ -82,6 +89,21 @@ def split_dataset(data_dir: str):
     
     return train_paths, test_paths, train_labels, test_labels
 
+def find_max_dimension() -> tuple:
+
+    max_width:  int = 0
+    max_height: int = 0
+
+    ndsb_img_paths = TRAIN_PATHS + TEST_PATHS
+
+    for image_path in ndsb_img_paths:
+        with Image.open(image_path) as img:
+            width, height = img.size
+            
+            max_width  = max(max_width, width)
+            max_height = max(max_height, height)
+
+    return max_width, max_height
 
 # """
 # MNIST dataset for testing
@@ -130,7 +152,9 @@ def split_dataset(data_dir: str):
 #             # Return the original image and label at the given index
 #             return  squeeze(self.mnist[index][0].view(-1,28*28)), self.mnist[index][1]
 
+
 if __name__ == '__main__':
     pass
 else:
-    train_paths, test_paths, train_labels, test_labels = split_dataset("./data/NDSB/train")
+    TRAIN_PATHS, TEST_PATHS, TRAIN_LABELS, TEST_LABELS = init_dataset("./data/NDSB/train")
+    MAX_DIMENSION = (424, 428) #find_max_dimension()
