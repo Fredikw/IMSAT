@@ -13,13 +13,14 @@ TRAIN_LABELS: list = []
 TEST_PATHS:   list = []
 TEST_LABELS:  list = []
 
-MAX_DIMENSION: tuple = () # max_width, max_height = (424, 428)
+# max_width, max_height
+MAX_DIMENSION: tuple = () # (424, 428)
+
 
 """
 Data Preprocessing
 
 """
-import numpy as np
 class NDSBDataset(data.Dataset):
     def __init__(self, train: bool = True, augment_data: bool = False):
         self.train = train
@@ -34,10 +35,10 @@ class NDSBDataset(data.Dataset):
             self.paths  = TEST_PATHS
 
         self.transform_list = transforms.Compose([
-            transforms.RandomRotation(degrees=15),
+            transforms.RandomRotation(degrees=180, fill=1),
             transforms.RandomHorizontalFlip(p=0.5),
             transforms.RandomVerticalFlip(p=0.5),
-            transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1)
+            # transforms.ColorJitter()
         ])
 
     def __getitem__(self, index):
@@ -126,30 +127,21 @@ class MNISTDataset(data.Dataset):
             download=True,
             transform=transforms.ToTensor())
 
-        # Apply data augmentation if requested
-        if self.augment_data:
-            # Define the data augmentation transforms to apply
-            transform_list = transforms.Compose([
-                transforms.RandomRotation(degrees=15),
-                transforms.RandomHorizontalFlip(p=0.5),
-                transforms.RandomVerticalFlip(p=0.5),
-                transforms.RandomCrop((28, 28), padding=0),
-                transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1)
-            ])
-
-            # Create a new dataset by applying the transforms to the original dataset
-            self.mnist_augmented = [(transform_list(img), label) for img, label in self.mnist]
+        self.transform_list = transforms.Compose([
+            transforms.RandomRotation(degrees=30)
+        ])
 
     def __len__(self):
         return len(self.mnist)
 
     def __getitem__(self, index):
         if self.augment_data:
+            img_aug = self.transform_list(self.mnist[index][0])
             # Return the augmented image, original image and label at the given index
-            return (squeeze(self.mnist[index][0].view(-1, 28*28)), squeeze(self.mnist_augmented[index][0].view(-1, 28*28))), self.mnist[index][1]
-        else:
-            # Return the original image and label at the given index
-            return  squeeze(self.mnist[index][0].view(-1,28*28)), self.mnist[index][1]
+            return (squeeze(self.mnist[index][0].view(-1, 28*28)), squeeze(img_aug.view(-1, 28*28))), self.mnist[index][1]
+
+        # Return the original image and label at the given index
+        return  squeeze(self.mnist[index][0].view(-1,28*28)), self.mnist[index][1]
 
 
 if __name__ == '__main__':
