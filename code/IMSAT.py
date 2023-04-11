@@ -1,3 +1,5 @@
+from sys import float_info
+
 import torch
 import torch.nn.functional as F
 
@@ -41,11 +43,11 @@ def shannon_entropy(probabilities: torch.Tensor) -> float:
 
     if probabilities.dim() == 1:
         # Calculates the entropy of mariginals according to the definition of Shannon Entropy.
-        return -torch.sum(probabilities * torch.log(probabilities))
+        return -torch.sum(probabilities * torch.log(probabilities + float_info.epsilon)) # Zeros in probabilities can cause torch.log to produce a NaN value. We therefore add float_info.epsilon
     
     else:
         # Calculates the entropy of conditionals, according to (9)
-        return -torch.sum(probabilities * torch.log(probabilities)) / probabilities.shape[0]
+        return -torch.sum(probabilities * torch.log(probabilities + float_info.epsilon)) / probabilities.shape[0]
 
 def mutual_information(mariginals: torch.Tensor, conditionals: torch.Tensor) -> float:
     """
