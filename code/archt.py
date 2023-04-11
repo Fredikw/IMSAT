@@ -16,8 +16,8 @@ class NeuralNet(nn.Module):
     def __init__(self):
         super(NeuralNet, self).__init__()
         
-        # Add first fully connected layer with 28 * 28 = 784 input neurons and 1200 output neurons
-        self.fc1 = nn.Linear(28 * 28, 1200)
+        # Add first fully connected layer with 428 * 428 input neurons and 1200 output neurons
+        self.fc1 = nn.Linear(428 * 428, 1200)
         # Initialize the weights of the first fully connected layer using the He normal initialization
         init.kaiming_normal_(self.fc1.weight, nonlinearity='relu')
         # Add first batch normalization layer with 1200 neurons and epsilon = 2e-5
@@ -34,7 +34,7 @@ class NeuralNet(nn.Module):
         self.relu2 = nn.ReLU()
         
         # Add output layer of size 10 
-        self.fc3 = nn.Linear(1200, 10)
+        self.fc3 = nn.Linear(1200, 121)
         init.kaiming_normal_(self.fc3.weight, nonlinearity='linear')
         
     # Define the forward pass through the network
