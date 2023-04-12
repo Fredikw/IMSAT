@@ -140,6 +140,6 @@ def regularized_information_maximization(model, inputs: torch.Tensor, outputs: t
 
     I = mutual_information(mariginals, conditionals)
 
-    R_sat = self_augmented_training(model, inputs, outputs)
+    # R_sat = self_augmented_training(model, inputs, outputs)
 
-    return R_sat - lam * I
+    return - I #R_sat - lam * I
