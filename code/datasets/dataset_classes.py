@@ -50,11 +50,7 @@ class NDSBDataset(data.Dataset):
 
         label = self.labels[index]
 
-        if self.augment_data:
-            img_trans = self.transform_list(img)
-            return (squeeze(img.view(1, -1)), squeeze(img_trans.view(1, -1))), label
-
-        return squeeze(img.view(1, -1)), label
+        return img, label
     
     def __len__(self):
         return len(self.paths)
