@@ -8,7 +8,7 @@ import torch.nn.init as init
 
 
 """
-Multi-output probabilistic classifier that maps similar inputs into similar representations.
+Feed Forward Neural Network
 
 """
 
