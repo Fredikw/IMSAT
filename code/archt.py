@@ -39,7 +39,7 @@ class NeuralNet(nn.Module):
         
     # Define the forward pass through the network
     def forward(self, x):
-        x = torch.flatten(x, start_dim=1)
+        # x = torch.flatten(x, start_dim=1)
         # Pass the input through the first fully connected layer
         x = self.fc1(x)
         # Pass the output of the first fully connected layer through the first batch normalization layer
