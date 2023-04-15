@@ -37,7 +37,7 @@ class NDSBDataset(data.Dataset):
         self.transform_list = transforms.Compose([
             transforms.RandomRotation(degrees=180, fill=1),
             transforms.RandomHorizontalFlip(p=0.5),
-            transforms.RandomVerticalFlip(p=0.5),
+            # transforms.RandomVerticalFlip(p=0.5),
             # transforms.ColorJitter()
         ])
 
