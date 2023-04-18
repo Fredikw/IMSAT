@@ -15,7 +15,7 @@ Feed Forward Neural Network
 class NeuralNet(nn.Module):
     def __init__(self, num_classes=121):
         super(NeuralNet, self).__init__()
-        
+        # self.flatten = nn.Flatten()
         # Add first fully connected layer with 428 * 428 input neurons and 1200 output neurons
         self.fc1 = nn.Linear(428 * 428, 1200)
         # Initialize the weights of the first fully connected layer using the He normal initialization

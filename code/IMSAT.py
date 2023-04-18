@@ -87,9 +87,9 @@ def self_augmented_training(model, inputs: torch.Tensor, outputs: torch.Tensor, 
     Generate Virtual Adversarial Perturbation
 
     """
-
-    #TODO Consider removing without breaking code
-    y = model(inputs)
+    # Disable gradient calculation for neural network weights
+    with torch.no_grad():
+        y = model(inputs)
     
     # Generate random unit tensor for perturbation direction
     d = torch.randn_like(inputs, requires_grad=True)
