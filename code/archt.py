@@ -184,21 +184,31 @@ class CNN(nn.Module):
 
 def get_model(model_name: str, num_classes=121):
 
-    if model_name == "NeuralNet":
+    if model_name == "neuralnet":
         model = NeuralNet(num_classes=num_classes)
-    elif model_name == "CNN":
+    
+    elif model_name == "cnn":
         model = CNN(num_classes=num_classes)
+
     # elif model_name == "AILARONNet":
     #     model = AILARONNet(num_classes=num_classes)
+    
     elif model_name == "resnet18":
-        model = models.resnet18(num_classes=num_classes)
-        # # Set last layer to have 121 output nodes (there are 121 classes)
-        # model.fc = torch.nn.Linear(model.fc.in_features, 121)
-        # # Modify the first convolutional layer to accept grayscale images
-        # model.conv1 = torch.nn.Conv2d(1, 64, kernel_size=7, stride=2, padding=3, bias=False)
+        model = models.resnet18()
+        # Change the first layer to accept grayscale images
+        model.conv1 = nn.Conv2d(1, 64, kernel_size=7, stride=2, padding=3, bias=False) # Setting the bias term to false in the first convolutional layer can improve performance, particularly for large-scale image classification tasks.
+        # Modify the final fully connected layer to have 121 output classes
+        model.fc = nn.Linear(in_features=512, out_features=121)
+        
     elif model_name == "alexnet":
-        model = models.alexnet(num_classes=num_classes)
+        model = models.alexnet()
+        # Modify the first layer to accept grayscale images
+        model.features[0]   = nn.Conv2d(1, 64, kernel_size=11, stride=4, padding=2)
+        # Modify the last layer to output the correct number of classes (121 in this example)
+        model.classifier[6] = nn.Linear(4096, 121)
+    
     else:
         raise NotImplemented
 
+    print(f"Model specifications: {model}")
     return model
