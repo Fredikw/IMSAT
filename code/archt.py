@@ -13,7 +13,7 @@ Feed Forward Neural Network
 """
 
 class NeuralNet(nn.Module):
-    def __init__(self, num_classes=121):
+    def __init__(self, num_classes):
         super(NeuralNet, self).__init__()
 
         # Fully connected layer with 428 * 428 input neurons and 1200 output neurons
@@ -53,7 +53,7 @@ Convolutional Neural Network
 """
 
 class CNN(nn.Module):
-    def __init__(self, num_classes=121):
+    def __init__(self, num_classes):
         super(CNN, self).__init__()
         
         # Convolutional layers
@@ -112,7 +112,7 @@ class CNN(nn.Module):
 
 # """
 # class AILARONNet(nn.Module):
-#     def __init__(self, num_classes=121):
+#     def __init__(self, num_classes):
 #         super(AILARONNet, self).__init__()
         
 #         # Convolutional layers
@@ -197,15 +197,15 @@ def get_model(model_name: str, num_classes=121):
         model = models.resnet18()
         # Change the first layer to accept grayscale images
         model.conv1 = nn.Conv2d(1, 64, kernel_size=7, stride=2, padding=3, bias=False) # Setting the bias term to false in the first convolutional layer can improve performance, particularly for large-scale image classification tasks.
-        # Modify the final fully connected layer to have 121 output classes
-        model.fc = nn.Linear(in_features=512, out_features=121)
+        # Modify the final fully connected layer to have num_classes output classes
+        model.fc = nn.Linear(in_features=512, out_features=num_classes)
         
     elif model_name == "alexnet":
         model = models.alexnet()
         # Modify the first layer to accept grayscale images
         model.features[0]   = nn.Conv2d(1, 64, kernel_size=11, stride=4, padding=2)
-        # Modify the last layer to output the correct number of classes (121 in this example)
-        model.classifier[6] = nn.Linear(4096, 121)
+        # Modify the last layer to output the correct number of classes
+        model.classifier[6] = nn.Linear(4096, num_classes)
     
     else:
         raise NotImplemented
