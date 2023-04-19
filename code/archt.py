@@ -58,28 +58,28 @@ class CNN(nn.Module):
         super(CNN, self).__init__()
         
         # Convolutional layers
-        self.conv1 = nn.Conv2d(in_channels=1, out_channels=32, kernel_size=3, padding=1)
-        # self.conv2 = nn.Conv2d(in_channels=32, out_channels=64, kernel_size=3, padding=1)
-        self.conv3 = nn.Conv2d(in_channels=32, out_channels=128, kernel_size=3, padding=1)
+        self.conv1 = nn.Conv2d(in_channels=1, out_channels=16, kernel_size=3, padding=1)
+        # self.conv2 = nn.Conv2d(in_channels=16, out_channels=16, kernel_size=3, padding=1)
+        self.conv3 = nn.Conv2d(in_channels=16, out_channels=16, kernel_size=3, padding=1)
 
         # Define max pooling layer
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
     
         # Add batch normalization layers
-        self.conv_bn1 = nn.BatchNorm2d(num_features=32, eps=2e-5)
-        # self.conv_bn2 = nn.BatchNorm2d(64, eps=2e-5)
-        self.conv_bn3 = nn.BatchNorm2d(num_features=128, eps=2e-5)
+        self.conv_bn1 = nn.BatchNorm2d(num_features=16, eps=2e-5)
+        # self.conv_bn2 = nn.BatchNorm2d(16, eps=2e-5)
+        self.conv_bn3 = nn.BatchNorm2d(num_features=16, eps=2e-5)
         
         # Dropout layer
-        # self.dropout = nn.Dropout(p=0.5)
+        self.dropout = nn.Dropout(p=0.5)
 
         # Fully connected layers
-        self.fc1 = nn.Linear(in_features=214*214*64, out_features=1024)
-        # self.fc2 = nn.Linear(in_features=1024, out_features=512)
+        self.fc1 = nn.Linear(in_features=107*107*16, out_features=1024)
+        # self.fc2 = nn.Linear(in_features=1024, out_features=1024)
         self.fc3 = nn.Linear(in_features=1024, out_features=num_classes)
 
         # Initialize the weights of the layer
-        # TODO Consider other initializations, e.g- torch.nn.init.xavier_uniform_, torch.nn.init.normal_, torch.nn.init.constant_
+        # TODO Consider other initializations, e.g torch.nn.init.kaiming_uniform_, torch.nn.init.xavier_uniform_, torch.nn.init.normal_, torch.nn.init.constant_
         init.xavier_uniform_(self.fc1.weight)
         # init.xavier_uniform_(self.fc2.weight)
         init.xavier_uniform_(self.fc3.weight)
@@ -93,13 +93,13 @@ class CNN(nn.Module):
         self.relu = nn.ReLU()
 
     def forward(self, x):
-        # 107*107*128
+
         x = self.pool(self.conv_bn1(self.conv1(x)))
         # x = self.pool(self.conv_bn2(self.conv2(x)))
         x = self.pool(self.conv_bn3(self.conv3(x)))
 
         # Flatten the output for the fully connected layers
-        x = x.view(-1, 107*107*128)  # -1 is a placeholder for the batch size
+        x = x.view(-1, 107*107*16)  # -1 is a placeholder for the batch size
         
         x = self.relu(self.fc_bn1(self.fc1(x)))
         # x = self.relu(self.fc_bn2(self.fc2(x)))
