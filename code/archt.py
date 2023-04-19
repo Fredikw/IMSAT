@@ -102,7 +102,7 @@ class CNN(nn.Module):
         
         x = self.relu(self.fc_bn1(self.fc1(x)))
         # x = self.relu(self.fc_bn2(self.fc2(x)))
-        x = self.fc3(x)
+        x = self.fc3(self.dropout(x))
         
         return x
 
