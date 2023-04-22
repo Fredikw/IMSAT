@@ -18,8 +18,9 @@ MAX_DIMENSION: tuple = () # (424, 428)
 
 
 """
-Data Preprocessing
+Dataset class for National Data Science Bowl plankton dataset
 
+https://www.kaggle.com/competitions/datasciencebowl/data
 """
 class NDSBDataset(data.Dataset):
     def __init__(self, train: bool = True, augment_data: bool = False):
@@ -35,10 +36,13 @@ class NDSBDataset(data.Dataset):
             self.paths  = TEST_PATHS
 
         self.transform_list = transforms.Compose([
-            transforms.RandomRotation(degrees=180, fill=1),
             transforms.RandomHorizontalFlip(p=0.5),
-            # transforms.RandomVerticalFlip(p=0.5),
-            # transforms.ColorJitter()
+            transforms.RandomRotation(degrees=180, fill=1),
+            transforms.RandomResizedCrop(size=428, scale=(0.80, 1.)),
+            transforms.ColorJitter(brightness=0.5),
+            transforms.GaussianBlur(kernel_size=21)
+            # transforms.RandomAdjustSharpness(sharpness_factor=2)
+            # transforms.RandomAffine(degrees=180, fill=1)
         ])
 
     def __getitem__(self, index):
@@ -54,6 +58,39 @@ class NDSBDataset(data.Dataset):
     
     def __len__(self):
         return len(self.paths)
+
+"""
+MNIST dataset for testing purposes
+
+"""
+
+from torchvision.datasets import MNIST
+
+class MNISTDataset(data.Dataset):
+    def __init__(self, train=True, augment_data=False):
+        # super().__init__()
+
+        self.train        = train
+        # Augmentation should not be applied for testing
+        self.augment_data = augment_data and train
+
+        # Load the MNIST dataset
+        self.mnist = MNIST(
+            root='./datasets',
+            train=self.train,
+            download=True,
+            transform=transforms.ToTensor())
+
+        self.transform_list = transforms.Compose([
+            transforms.RandomRotation(degrees=30)
+        ])
+
+    def __len__(self):
+        return len(self.mnist)
+
+    def __getitem__(self, index):
+        # Return the original image and label at the given index
+        return  self.mnist[index][0], self.mnist[index][1]
 
 """
 Utility Functions
@@ -101,43 +138,6 @@ def find_max_dimension() -> tuple:
             max_height = max(max_height, height)
 
     return max_width, max_height
-
-"""
-MNIST dataset for testing
-
-"""
-
-from torchvision.datasets import MNIST
-
-class MNISTDataset(data.Dataset):
-    def __init__(self, train=True, augment_data=False):
-        # super().__init__()
-
-        self.train        = train
-        self.augment_data = augment_data
-
-        # Load the MNIST dataset
-        self.mnist = MNIST(
-            root='./datasets',
-            train=self.train,
-            download=True,
-            transform=transforms.ToTensor())
-
-        self.transform_list = transforms.Compose([
-            transforms.RandomRotation(degrees=30)
-        ])
-
-    def __len__(self):
-        return len(self.mnist)
-
-    def __getitem__(self, index):
-        if self.augment_data:
-            img_aug = self.transform_list(self.mnist[index][0])
-            # Return the augmented image, original image and label at the given index
-            return (squeeze(self.mnist[index][0].view(-1, 28*28)), squeeze(img_aug.view(-1, 28*28))), self.mnist[index][1]
-
-        # Return the original image and label at the given index
-        return  squeeze(self.mnist[index][0].view(-1,28*28)), self.mnist[index][1]
 
 
 if __name__ == '__main__':
