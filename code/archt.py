@@ -222,23 +222,23 @@ def get_model(model_name: str, num_classes=121):
     #     # Modify the last layer to output the correct number of classes
     #     model.classifier[6] = nn.Linear(4096, num_classes)
 
-    # elif model_name == "densenet":
-    #     # Visual Geometry Group
-    #     model = models.densenet121()
-    #     # Modify the input layer to accept grayscale images
-    #     model.features[0] = nn.Conv2d(1, 64, kernel_size=7, stride=2, padding=3, bias=False)
-    #     # Modify the last layer to output the correct number of classes
-    #     model.classifier = nn.Linear(in_features=1024, out_features=num_classes)
+    elif model_name == "densenet":
+        # Visual Geometry Group
+        model = models.densenet121()
+        # Modify the input layer to accept grayscale images
+        model.features[0] = nn.Conv2d(1, 64, kernel_size=7, stride=2, padding=3, bias=False)
+        # Modify the last layer to output the correct number of classes
+        model.classifier = nn.Linear(in_features=1024, out_features=num_classes)
     
-    # elif model_name == "inception_v3":
-    #     # Visual Geometry Group
-    #     model = models.inception_v3()
-    #     # Modify the input layer to accept grayscale images
-    #     model.Conv2d_1a_3x3.conv = nn.Conv2d(1, 32, kernel_size=3, stride=2, bias=False)
-    #     # Remove the auxiliary outputs
-    #     model.aux_logits = False
-    #     # Modify the last layer to output the correct number of classes
-    #     model.fc = nn.Linear(2048, num_classes)
+    elif model_name == "inception_v3":
+        # Visual Geometry Group
+        model = models.inception_v3()
+        # Modify the input layer to accept grayscale images
+        model.Conv2d_1a_3x3.conv = nn.Conv2d(1, 32, kernel_size=3, stride=2, bias=False)
+        # Remove the auxiliary outputs
+        model.aux_logits = False
+        # Modify the last layer to output the correct number of classes
+        model.fc = nn.Linear(2048, num_classes)
 
     else:
         raise NotImplemented
