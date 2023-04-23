@@ -34,7 +34,10 @@ class NDSBDataset(data.Dataset):
         else:
             self.labels = TEST_LABELS
             self.paths  = TEST_PATHS
-
+        
+        # TODO Consider different compositions
+        # self.transform_list = transforms.RandomChoice([])
+        # self.transform_list = transforms.RandomApply([])
         self.transform_list = transforms.Compose([
             transforms.RandomHorizontalFlip(p=0.5),
             transforms.RandomRotation(degrees=180, fill=1),
