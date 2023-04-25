@@ -14,8 +14,8 @@ TEST_PATHS:   list = []
 TEST_LABELS:  list = []
 
 # max_width, max_height
-MAX_DIMENSION: tuple = () # (424, 428)
-
+MAX_DIMENSIONS: tuple = () # (424, 428)
+DIMENSIONS: tuple = ()
 
 """
 Dataset class for National Data Science Bowl plankton dataset
@@ -41,7 +41,7 @@ class NDSBDataset(data.Dataset):
         self.transform_list = transforms.Compose([
             transforms.RandomHorizontalFlip(p=0.5),
             transforms.RandomRotation(degrees=180, fill=1),
-            transforms.RandomResizedCrop(size=428, scale=(0.80, 1.)),
+            transforms.RandomResizedCrop(size=DIMENSIONS, scale=(0.80, 1.)),
             transforms.ColorJitter(brightness=0.5),
             transforms.GaussianBlur(kernel_size=21)
             # transforms.RandomAdjustSharpness(sharpness_factor=2)
@@ -52,7 +52,7 @@ class NDSBDataset(data.Dataset):
         # Load image
         img = Image.open(self.paths[index])
         # Resize image to the largest image in the dataset
-        img = ImageOps.pad(image=img, size=MAX_DIMENSION, color=255)
+        img = ImageOps.pad(image=img, size=DIMENSIONS, color=255)
         img = transforms.ToTensor()(img)
 
         label = self.labels[index]
@@ -147,4 +147,5 @@ if __name__ == '__main__':
     pass
 else:
     TRAIN_PATHS, TEST_PATHS, TRAIN_LABELS, TEST_LABELS = init_dataset("./datasets/NDSB/train")
-    MAX_DIMENSION = (428, 428) # find_max_dimension()
+    # MAX_DIMENSION = (428, 428) # find_max_dimension()
+    DIMENSIONS = (214, 214)
