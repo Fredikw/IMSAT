@@ -80,7 +80,7 @@ class CNN(nn.Module):
 
         # Initialize the weights of the layer
         # TODO Consider other initializations, e.g torch.nn.init.kaiming_uniform_, torch.nn.init.xavier_uniform_, torch.nn.init.normal_, torch.nn.init.constant_
-        init.xavier_uniform_(self.fc1.weight)
+        init.kaiming_normal_(self.fc1.weight, nonlinearity='relu')
         # init.xavier_uniform_(self.fc2.weight)
         init.xavier_uniform_(self.fc3.weight)
 
@@ -96,7 +96,7 @@ class CNN(nn.Module):
 
         x = self.pool(self.conv_bn1(self.conv1(x)))
         # x = self.pool(self.conv_bn2(self.conv2(x)))
-        x = self.pool(self.conv_bn3(self.conv3(x)))
+        x = self.conv_bn3(self.conv3(x))
 
         # Flatten the output for the fully connected layers
         x = x.view(-1, 107*107*16)  # -1 is a placeholder for the batch size
