@@ -24,6 +24,7 @@ class NeuralNet(nn.Module):
         
         # Initialize the weights of the layer
         # TODO Consider other initializations, e.g torch.nn.init.kaiming_uniform_, torch.nn.init.xavier_uniform_, torch.nn.init.normal_, torch.nn.init.constant_
+        # Improved performance using init.kaiming_normal_(self.fc1.weight, nonlinearity='relu') on MNIST
         init.xavier_uniform_(self.fc1.weight)
         init.xavier_uniform_(self.fc2.weight)
         init.xavier_uniform_(self.fc3.weight)
