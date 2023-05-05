@@ -6,7 +6,6 @@ import torchvision.models as models
 Feed Forward Neural Network
 
 """
-
 class NeuralNet(nn.Module):
     def __init__(self, num_classes):
         super(NeuralNet, self).__init__()
@@ -45,9 +44,7 @@ class NeuralNet(nn.Module):
 """
 Convolutional Neural Network
 
-# TODO Test model
 """
-
 class CNN(nn.Module):
     def __init__(self, num_classes):
         super(CNN, self).__init__()
@@ -175,7 +172,6 @@ class AILARONNet(nn.Module):
 """
 
 """
-
 def get_model(model_name: str, num_classes=121):
 
     if model_name == "neuralnet":
