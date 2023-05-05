@@ -1,9 +1,8 @@
-from typing import List
-
 from sys import float_info
 
+from typing import List
+
 import torch
-import torch.nn.functional as F
 
 def invariant_information_clustering(outputs: List[torch.Tensor], C: int=121, EPS: float=float_info.epsilon) -> float:
     """
