@@ -148,4 +148,4 @@ if __name__ == '__main__':
 else:
     TRAIN_PATHS, TEST_PATHS, TRAIN_LABELS, TEST_LABELS = init_dataset("./datasets/NDSB/train")
     # MAX_DIMENSION = (428, 428) # find_max_dimension()
-    DIMENSIONS = (214, 214)
+    DIMENSIONS = (299, 299)
