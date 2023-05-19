@@ -191,28 +191,20 @@ def get_model(model_name: str, num_classes=121):
         # Modify the final fully connected layer to have num_classes output classes
         model.fc = nn.Linear(in_features=512, out_features=num_classes)
         
-    elif model_name == "alexnet":
-        model = models.alexnet()
-        # Modify the first layer to accept grayscale images
-        model.features[0]   = nn.Conv2d(1, 64, kernel_size=11, stride=4, padding=2)
+#    elif model_name == "alexnet":
+#        model = models.alexnet()
+#        # Modify the first layer to accept grayscale images
+#        model.features[0]   = nn.Conv2d(1, 64, kernel_size=11, stride=4, padding=2)
+#        # Modify the last layer to output the correct number of classes
+#        model.classifier[6] = nn.Linear(4096, num_classes)
+
+    elif model_name == "vgg11":
+       # Visual Geometry Group
+        model = models.vgg11()
+        # Modify the input layer to accept grayscale images
+        model.features[0] = nn.Conv2d(1, 64, kernel_size=3, padding=1)
         # Modify the last layer to output the correct number of classes
         model.classifier[6] = nn.Linear(4096, num_classes)
-
-    # elif model_name == "vgg11":
-    #     # Visual Geometry Group
-    #     model = models.vgg11()
-    #     # Modify the input layer to accept grayscale images
-    #     model.features[0] = nn.Conv2d(1, 64, kernel_size=3, padding=1)
-    #     # Modify the last layer to output the correct number of classes
-    #     model.classifier[6] = nn.Linear(4096, num_classes)
-
-    # elif model_name == "vgg11_bn":
-    #     # Visual Geometry Group
-    #     model = models.vgg11_bn()
-    #     # Modify the input layer to accept grayscale images
-    #     model.features[0] = nn.Conv2d(1, 64, kernel_size=3, padding=1)
-    #     # Modify the last layer to output the correct number of classes
-    #     model.classifier[6] = nn.Linear(4096, num_classes)
 
     elif model_name == "densenet":
         model = models.densenet121()
@@ -229,6 +221,15 @@ def get_model(model_name: str, num_classes=121):
         model.aux_logits = False
         # Modify the last layer to output the correct number of classes
         model.fc = nn.Linear(model.fc.in_features, num_classes)
+        
+#        # Initialize weights
+#        for _, module in model.named_modules():
+#            if isinstance(module, nn.Linear):
+#                init.xavier_uniform_(module.weight)
+
+#        # If you also want to initialize the bias to zero
+#        if module.bias is not None:
+#            init.constant_(module.bias, 0)
 
     else:
         raise NotImplemented
