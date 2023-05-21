@@ -66,7 +66,7 @@ def mutual_information(mariginals: torch.Tensor, conditionals: torch.Tensor) -> 
 
     return marginal_entropy - conditional_entropy
 
-def self_augmented_training(model, inputs: torch.Tensor, outputs: torch.Tensor, eps: float = 1.0, ksi: float = 1e0, num_iters: int = 1) -> float:
+def self_augmented_training(model, inputs: torch.Tensor, outputs: torch.Tensor, eps: float = 1e1, ksi: float = 1e1, num_iters: int = 1) -> float:
     """
     Self Augmented Training by Virtual Adversarial Perturbation.
     
