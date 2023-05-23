@@ -33,7 +33,7 @@ Setting generic hyperparameters
 """
 
 num_epochs: int = 25
-batch_size: int = 256   # Should be set to a power of 2.
+batch_size: int = 128   # Should be set to a power of 2.
 # Learning rate
 lr:         float = 1e-4 # Learning rate used in the IIC paper: lr=1e-4.
 
