@@ -100,20 +100,33 @@ Utility Functions
 
 """
 
-# Split dataset into random train and test subsets.
-def init_dataset(data_dir: str) -> tuple:
+def init_dataset(data_dir: str, subset: bool=False) -> tuple:
     """
     Split dataset into random train and test subset.
 
     Args:
         data_dir (str): root directory path of the dataset.
+        subset (bool): If True, only consider a subset of classes.
     """
+    subset_classes = ['acantharia_protist',
+                      'chordate_type1',
+                      'copepod_calanoid_eucalanus',
+                      'copepod_cyclopoid_copilia',
+                      'ctenophore_cestid',
+                      'diatom_chain_string',
+                      'echinoderm_larva_seastar_brachiolaria',
+                      'hydromedusae_haliscera',
+                      'ctenophore_lobate',
+                      'radiolarian_chain']
 
     ndsb_labels    = []
     ndsb_img_paths = []
 
     # Read label and file paths
     for label, label_path in enumerate(sorted(os.listdir(data_dir))):
+        # If subset is True, only consider classes in subset_classes
+        if subset and label_path not in subset_classes:
+            continue
         for sample in os.listdir(os.path.join(data_dir, label_path)):
             ndsb_labels.append(label)
             ndsb_img_paths.append(os.path.join(data_dir, label_path, sample))
@@ -125,23 +138,6 @@ def init_dataset(data_dir: str) -> tuple:
         train_test_split(ndsb_img_paths, ndsb_labels)
     
     return train_paths, test_paths, train_labels, test_labels
-
-def find_max_dimension() -> tuple:
-
-    max_width:  int = 0
-    max_height: int = 0
-
-    ndsb_img_paths = TRAIN_PATHS + TEST_PATHS
-
-    for image_path in ndsb_img_paths:
-        with Image.open(image_path) as img:
-            width, height = img.size
-            
-            max_width  = max(max_width, width)
-            max_height = max(max_height, height)
-
-    return max_width, max_height
-
 
 if __name__ == '__main__':
     pass
