@@ -9,7 +9,7 @@ Setting hyperparameters for the IMSAT algorithm
 """
 
 # Trade-off parameter for mutual information and smooth regularization
-lam: float = 0.1
+lam: float = 1
         
 """
 ...
