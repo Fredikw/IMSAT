@@ -42,7 +42,7 @@ class NDSBDataset(data.Dataset):
             transforms.RandomHorizontalFlip(p=0.5),
             transforms.RandomRotation(degrees=180, fill=1),
             transforms.RandomResizedCrop(size=DIMENSIONS, scale=(0.80, 1.)),
-            transforms.ColorJitter(brightness=0.5),
+            transforms.ColorJitter(brightness=0.2),
             transforms.GaussianBlur(kernel_size=21)
             # transforms.RandomAdjustSharpness(sharpness_factor=2)
             # transforms.RandomAffine(degrees=180, fill=1)
@@ -113,10 +113,10 @@ def init_dataset(data_dir: str, subset: bool=False) -> tuple:
                       'copepod_calanoid_eucalanus',
                       'copepod_cyclopoid_copilia',
                       'ctenophore_cestid',
+                      'ctenophore_lobate',
                       'diatom_chain_string',
                       'echinoderm_larva_seastar_brachiolaria',
                       'hydromedusae_haliscera',
-                      'ctenophore_lobate',
                       'radiolarian_chain']
 
     ndsb_labels    = []
@@ -128,12 +128,10 @@ def init_dataset(data_dir: str, subset: bool=False) -> tuple:
         if subset and label_path not in subset_classes:
             continue
         for sample in os.listdir(os.path.join(data_dir, label_path)):
-            ndsb_labels.append(label)
+            ndsb_labels.append(label) if not subset else ndsb_labels.append(subset_classes.index(label_path))
             ndsb_img_paths.append(os.path.join(data_dir, label_path, sample))
 
-
     # Split dataset into training and test set
-
     train_paths, test_paths, train_labels, test_labels = \
         train_test_split(ndsb_img_paths, ndsb_labels)
     
@@ -142,6 +140,6 @@ def init_dataset(data_dir: str, subset: bool=False) -> tuple:
 if __name__ == '__main__':
     pass
 else:
-    TRAIN_PATHS, TEST_PATHS, TRAIN_LABELS, TEST_LABELS = init_dataset("./datasets/NDSB/train")
+    TRAIN_PATHS, TEST_PATHS, TRAIN_LABELS, TEST_LABELS = init_dataset("./datasets/NDSB/train", subset=True)
     # MAX_DIMENSION = (428, 428) # find_max_dimension()
     DIMENSIONS = (299, 299)
