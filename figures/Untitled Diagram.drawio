@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net" modified="2023-05-27T14:33:27.248Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36" etag="cCKJ75ebiXGLJFJ2AIks" version="21.3.2" type="github">
+<mxfile host="app.diagrams.net" modified="2023-05-27T15:04:18.399Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36" etag="fFxBiJaHpKVfiKB2n9HZ" version="21.3.2" type="github">
   <diagram id="kNOZGvcKdx7D5Ul5yRG0" name="Page-1">
-    <mxGraphModel dx="1161" dy="239" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="1" shadow="0">
+    <mxGraphModel dx="3038" dy="1027" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="1" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -943,6 +943,33 @@
         </mxCell>
         <mxCell id="vUlFLTZYzrWBNEB_TXq0-758" value="$$\mathbf{x}$$" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fillColor=#F5F5F5;" vertex="1" parent="1">
           <mxGeometry x="-450" y="422.5" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="vUlFLTZYzrWBNEB_TXq0-786" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#000000;fontColor=#FEFAE0;fillColor=#BC6C25;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="vUlFLTZYzrWBNEB_TXq0-781" target="vUlFLTZYzrWBNEB_TXq0-784">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="vUlFLTZYzrWBNEB_TXq0-787" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#000000;fontColor=#FEFAE0;fillColor=#BC6C25;" edge="1" parent="1" source="vUlFLTZYzrWBNEB_TXq0-781" target="vUlFLTZYzrWBNEB_TXq0-782">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="vUlFLTZYzrWBNEB_TXq0-788" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#000000;fontColor=#FEFAE0;fillColor=#BC6C25;" edge="1" parent="1" source="vUlFLTZYzrWBNEB_TXq0-781" target="vUlFLTZYzrWBNEB_TXq0-785">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="vUlFLTZYzrWBNEB_TXq0-789" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#000000;fontColor=#FEFAE0;fillColor=#BC6C25;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="vUlFLTZYzrWBNEB_TXq0-781" target="vUlFLTZYzrWBNEB_TXq0-783">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="vUlFLTZYzrWBNEB_TXq0-781" value="&lt;div&gt;Machine Learning&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fillColor=#E3EEFF;" vertex="1" parent="1">
+          <mxGeometry x="-1013" y="105" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="vUlFLTZYzrWBNEB_TXq0-782" value="&lt;div&gt;Semi-Supervised Learning&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fillColor=#FFFAF5;" vertex="1" parent="1">
+          <mxGeometry x="-1090" y="215" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="vUlFLTZYzrWBNEB_TXq0-783" value="&lt;div&gt;Reinforcement learning&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fillColor=#FFFAF5;" vertex="1" parent="1">
+          <mxGeometry x="-786.26" y="215" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="vUlFLTZYzrWBNEB_TXq0-784" value="&lt;div&gt;Supervised Learning&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fillColor=#FFFAF5;" vertex="1" parent="1">
+          <mxGeometry x="-1240" y="215" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="vUlFLTZYzrWBNEB_TXq0-785" value="&lt;div&gt;Usupervised Learning&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fillColor=#FFFAF5;" vertex="1" parent="1">
+          <mxGeometry x="-936.26" y="215" width="120" height="60" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
