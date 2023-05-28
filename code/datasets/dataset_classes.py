@@ -100,7 +100,7 @@ Utility Functions
 
 """
 
-def init_dataset(data_dir: str, subset: bool=False) -> tuple:
+def init_dataset(data_dir: str, subset: bool=False, max_instances:int=200) -> tuple:
     """
     Split dataset into random train and test subset.
 
@@ -121,13 +121,20 @@ def init_dataset(data_dir: str, subset: bool=False) -> tuple:
 
     ndsb_labels    = []
     ndsb_img_paths = []
+    class_counts = {class_name: 0 for class_name in subset_classes}
 
     # Read label and file paths
     for label, label_path in enumerate(sorted(os.listdir(data_dir))):
         # If subset is True, only consider classes in subset_classes
         if subset and label_path not in subset_classes:
             continue
+
         for sample in os.listdir(os.path.join(data_dir, label_path)):
+            # If we have enough instances of this class, continue to the next one
+            if class_counts[label_path] >= max_instances:
+                continue
+
+            class_counts[label_path] += 1
             ndsb_labels.append(label) if not subset else ndsb_labels.append(subset_classes.index(label_path))
             ndsb_img_paths.append(os.path.join(data_dir, label_path, sample))
 
