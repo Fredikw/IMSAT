@@ -4,7 +4,7 @@ from typing import List
 
 import torch
 
-def invariant_information_clustering(outputs: List[torch.Tensor], C: int=121, EPS: float=float_info.epsilon) -> float:
+def invariant_information_clustering(outputs: List[torch.Tensor], C: int=10, EPS: float=float_info.epsilon) -> float:
     """
     Calculate the invariant information clustering (IIC) loss.
 

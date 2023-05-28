@@ -172,7 +172,7 @@ class AILARONNet(nn.Module):
 """
 
 """
-def get_model(model_name: str, num_classes=121):
+def get_model(model_name: str, num_classes=None):
 
     if model_name == "neuralnet":
         model = NeuralNet(num_classes=num_classes)
