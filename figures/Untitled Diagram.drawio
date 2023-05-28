@@ -1,9 +1,12 @@
-<mxfile host="app.diagrams.net" modified="2023-05-28T14:04:50.327Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36" etag="j24cLIIL7YubV9aBAg8Y" version="21.3.2" type="github">
+<mxfile host="app.diagrams.net" modified="2023-05-28T16:27:37.037Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36" etag="Xa-Jxehmb0Ry4A6yVaK_" version="21.3.2" type="github">
   <diagram id="kNOZGvcKdx7D5Ul5yRG0" name="Page-1">
-    <mxGraphModel dx="3108" dy="1081" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="1" shadow="0">
+    <mxGraphModel dx="3930" dy="1712" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="1" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
+        <mxCell id="vUlFLTZYzrWBNEB_TXq0-828" value="" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fillColor=#EAFFE9;dashed=1;opacity=40;" vertex="1" parent="1">
+          <mxGeometry x="-1090" y="400" width="330" height="432.5" as="geometry" />
+        </mxCell>
         <mxCell id="vUlFLTZYzrWBNEB_TXq0-766" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#E3EEFF;fillStyle=solid;gradientColor=none;labelBackgroundColor=none;opacity=70;" vertex="1" parent="1">
           <mxGeometry x="-450" y="753.75" width="147.5" height="147.5" as="geometry" />
         </mxCell>
@@ -957,7 +960,7 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="vUlFLTZYzrWBNEB_TXq0-781" value="&lt;div&gt;Machine Learning&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fillColor=#E3EEFF;" vertex="1" parent="1">
-          <mxGeometry x="-1013" y="105" width="120" height="60" as="geometry" />
+          <mxGeometry x="-1013" y="80" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="vUlFLTZYzrWBNEB_TXq0-782" value="&lt;div&gt;Semi-Supervised Learning&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fillColor=#FFFAF5;" vertex="1" parent="1">
           <mxGeometry x="-1090" y="215" width="120" height="60" as="geometry" />
@@ -976,6 +979,69 @@
         </mxCell>
         <mxCell id="vUlFLTZYzrWBNEB_TXq0-791" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=none;gradientColor=none;" vertex="1" parent="1">
           <mxGeometry x="-450" y="753.75" width="147.5" height="147.5" as="geometry" />
+        </mxCell>
+        <mxCell id="vUlFLTZYzrWBNEB_TXq0-827" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;fontColor=#FEFAE0;fillColor=#BC6C25;" edge="1" parent="1" source="vUlFLTZYzrWBNEB_TXq0-793" target="vUlFLTZYzrWBNEB_TXq0-801">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="vUlFLTZYzrWBNEB_TXq0-793" value="ML model" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fillColor=#E3EEFF;" vertex="1" parent="1">
+          <mxGeometry x="-1240" y="530" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="vUlFLTZYzrWBNEB_TXq0-825" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;fontColor=#FEFAE0;fillColor=#BC6C25;" edge="1" parent="1" source="vUlFLTZYzrWBNEB_TXq0-794" target="vUlFLTZYzrWBNEB_TXq0-795">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="vUlFLTZYzrWBNEB_TXq0-794" value="&lt;div&gt;Input&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fillColor=#F5F5F5;" vertex="1" parent="1">
+          <mxGeometry x="-1240" y="737.5" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="vUlFLTZYzrWBNEB_TXq0-826" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;fontColor=#FEFAE0;fillColor=#BC6C25;" edge="1" parent="1" source="vUlFLTZYzrWBNEB_TXq0-795" target="vUlFLTZYzrWBNEB_TXq0-793">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="vUlFLTZYzrWBNEB_TXq0-795" value="&lt;div&gt;Hand-crafted features&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fillColor=#FFFAF5;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="-1240" y="632.5" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="vUlFLTZYzrWBNEB_TXq0-801" value="&lt;div&gt;Output&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fillColor=#F5F5F5;" vertex="1" parent="1">
+          <mxGeometry x="-1240" y="427.5" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="vUlFLTZYzrWBNEB_TXq0-822" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;fontColor=#FEFAE0;fillColor=#BC6C25;" edge="1" parent="1" source="vUlFLTZYzrWBNEB_TXq0-802" target="vUlFLTZYzrWBNEB_TXq0-805">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="vUlFLTZYzrWBNEB_TXq0-802" value="ML model" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fillColor=#E3EEFF;" vertex="1" parent="1">
+          <mxGeometry x="-1070" y="530" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="vUlFLTZYzrWBNEB_TXq0-824" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;fontColor=#FEFAE0;fillColor=#BC6C25;" edge="1" parent="1" source="vUlFLTZYzrWBNEB_TXq0-803" target="vUlFLTZYzrWBNEB_TXq0-804">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="vUlFLTZYzrWBNEB_TXq0-803" value="&lt;div&gt;Input&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fillColor=#F5F5F5;" vertex="1" parent="1">
+          <mxGeometry x="-1070" y="737.5" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="vUlFLTZYzrWBNEB_TXq0-823" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;fontColor=#FEFAE0;fillColor=#BC6C25;" edge="1" parent="1" source="vUlFLTZYzrWBNEB_TXq0-804" target="vUlFLTZYzrWBNEB_TXq0-802">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="vUlFLTZYzrWBNEB_TXq0-804" value="&lt;div&gt;Feature Extraction&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fillColor=#FFFAF5;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="-1070" y="632.5" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="vUlFLTZYzrWBNEB_TXq0-805" value="&lt;div&gt;Output&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fillColor=#F5F5F5;" vertex="1" parent="1">
+          <mxGeometry x="-1070" y="427.5" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="vUlFLTZYzrWBNEB_TXq0-821" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;strokeColor=#000000;fontColor=#FEFAE0;fillColor=#BC6C25;" edge="1" parent="1" source="vUlFLTZYzrWBNEB_TXq0-814" target="vUlFLTZYzrWBNEB_TXq0-817">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="vUlFLTZYzrWBNEB_TXq0-814" value="ML model" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fillColor=#E3EEFF;" vertex="1" parent="1">
+          <mxGeometry x="-900" y="530" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="vUlFLTZYzrWBNEB_TXq0-818" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;strokeColor=#000000;fontColor=#FEFAE0;fillColor=#BC6C25;" edge="1" parent="1" source="vUlFLTZYzrWBNEB_TXq0-815" target="vUlFLTZYzrWBNEB_TXq0-814">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="vUlFLTZYzrWBNEB_TXq0-815" value="&lt;div&gt;Input&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fillColor=#F5F5F5;" vertex="1" parent="1">
+          <mxGeometry x="-900" y="737.5" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="vUlFLTZYzrWBNEB_TXq0-817" value="&lt;div&gt;Output&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fillColor=#F5F5F5;" vertex="1" parent="1">
+          <mxGeometry x="-900" y="427.5" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="vUlFLTZYzrWBNEB_TXq0-829" value="&lt;font color=&quot;#000000&quot;&gt;Classical Machine Learning&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#FEFAE0;fontFamily=Times New Roman;" vertex="1" parent="1">
+          <mxGeometry x="-1260" y="852.5" width="160" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="vUlFLTZYzrWBNEB_TXq0-830" value="&lt;font color=&quot;#000000&quot;&gt;Representation Learning&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#FEFAE0;fontFamily=Times New Roman;" vertex="1" parent="1">
+          <mxGeometry x="-1005" y="852.5" width="160" height="30" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
