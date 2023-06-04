@@ -1,3 +1,4 @@
+from typing import List
 from sys import float_info
 
 import torch
@@ -66,7 +67,7 @@ def mutual_information(mariginals: torch.Tensor, conditionals: torch.Tensor) -> 
 
     return marginal_entropy - conditional_entropy
 
-def self_augmented_training(model, inputs: torch.Tensor, outputs: torch.Tensor, eps: float = 1e1, ksi: float = 1e1, num_iters: int = 1) -> float:
+def virtual_adversarial_training(model, inputs: torch.Tensor, outputs: torch.Tensor, eps: float = 1e1, ksi: float = 1e1, num_iters: int = 1) -> float:
     """
     Self Augmented Training by Virtual Adversarial Perturbation.
     
@@ -122,7 +123,7 @@ def self_augmented_training(model, inputs: torch.Tensor, outputs: torch.Tensor, 
     
     return loss
 
-def regularized_information_maximization(model, inputs: torch.Tensor, outputs: torch.Tensor) -> float():
+def regularized_information_maximization(model, inputs: torch.Tensor, outputs: List[torch.Tensor], vat:bool=True) -> float():
     """
     Computes the loss using regularized information maximization.
 
@@ -134,12 +135,16 @@ def regularized_information_maximization(model, inputs: torch.Tensor, outputs: t
     Returns:
         The loss given by mutual information and the regularization penalty.
     """
+    z, zt = outputs
 
-    conditionals = outputs
+    conditionals = z
     mariginals   = mariginal_distribution(conditionals)
 
     I = mutual_information(mariginals, conditionals)
 
-    R_sat = self_augmented_training(model, inputs, outputs)
+    if vat:
+        R = virtual_adversarial_training(model, inputs, outputs)
+    else:
+        R = F.kl_div(z, zt, reduction='batchmean')
 
-    return R_sat - lam * I
+    return R - lam * I
