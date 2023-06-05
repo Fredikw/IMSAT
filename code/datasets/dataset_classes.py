@@ -8,13 +8,7 @@ from PIL import ImageOps, Image
 
 from sklearn.model_selection import train_test_split
 
-TRAIN_PATHS:  list = []
-TRAIN_LABELS: list = []
-TEST_PATHS:   list = []
-TEST_LABELS:  list = []
-
-# max_width, max_height
-MAX_DIMENSIONS: tuple = () # (424, 428)
+# max_width, max_height = (424, 428)
 DIMENSIONS: tuple = ()
 
 """
@@ -23,17 +17,12 @@ Dataset class for National Data Science Bowl plankton dataset
 https://www.kaggle.com/competitions/datasciencebowl/data
 """
 class NDSBDataset(data.Dataset):
-    def __init__(self, train: bool = True, augment_data: bool = False):
-        self.train = train
-        # Augmentation should not be applied for testing
-        self.augment_data = augment_data and train
-
-        if self.train:
-            self.labels = TRAIN_LABELS
-            self.paths  = TRAIN_PATHS
-        else:
-            self.labels = TEST_LABELS
-            self.paths  = TEST_PATHS
+    def __init__(self, data_paths: list, data_labels: list, augment_data: bool = False):
+        
+        self.augment_data = augment_data
+        
+        self.labels = data_labels
+        self.paths  = data_paths
         
         # TODO Consider different compositions
         # self.transform_list = transforms.RandomChoice([])
@@ -138,15 +127,11 @@ def init_dataset(data_dir: str, subset: bool=False, max_instances:int=200) -> tu
             ndsb_labels.append(label) if not subset else ndsb_labels.append(subset_classes.index(label_path))
             ndsb_img_paths.append(os.path.join(data_dir, label_path, sample))
 
-    # Split dataset into training and test set
-    train_paths, test_paths, train_labels, test_labels = \
-        train_test_split(ndsb_img_paths, ndsb_labels)
-    
-    return train_paths, test_paths, train_labels, test_labels
+    return ndsb_img_paths, ndsb_labels
 
 if __name__ == '__main__':
     pass
 else:
-    TRAIN_PATHS, TEST_PATHS, TRAIN_LABELS, TEST_LABELS = init_dataset("./datasets/NDSB/train", subset=True)
+    # TRAIN_PATHS, TEST_PATHS, TRAIN_LABELS, TEST_LABELS = init_dataset("./datasets/NDSB/train", subset=True)
     # MAX_DIMENSION = (428, 428) # find_max_dimension()
     DIMENSIONS = (299, 299)

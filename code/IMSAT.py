@@ -10,7 +10,7 @@ Setting hyperparameters for the IMSAT algorithm
 """
 
 # Trade-off parameter for mutual information and smooth regularization
-lam: float = 1
+lam: float = 2
         
 """
 ...
@@ -143,7 +143,7 @@ def regularized_information_maximization(model, inputs: torch.Tensor, outputs: L
     I = mutual_information(mariginals, conditionals)
 
     if vat:
-        R = virtual_adversarial_training(model, inputs, outputs)
+        R = virtual_adversarial_training(model, inputs, z)
     else:
         R = F.kl_div(z, zt, reduction='batchmean')
 
